@@ -24,21 +24,13 @@ Working solvers CPU_TROMP, CUDA_TROMP
 
   - Use Boost 1.62+ (if it is not available from the repos you will have to download and build it yourself)
   - CMake v3.5 (if it is not available from the repos you will have to download and build it yourself)
-  - Currently support only static building (CPU_XENONCAT, CUDA_DJEZO are enabled by default, check **CMakeLists.txt** in **nheqminer** root folder)
-  - If not on Ubuntu make sure you have **fasm** installed and accessible in **PATH**
+  - Currently support only static building (CUDA_TROMP are enabled by default, check **CMakeLists.txt** in **aion_miner** root folder)
+
   - After that open the terminal and run the following commands:
-    - `git clone https://github.com/nicehash/nheqminer.git`
-    - Generating asm object file:
-      - **On Ubuntu**:
-        - `cd nheqminer/cpu_xenoncat/asm_linux/`
-        - `sh assemble.sh`
-      - **bundeled fasm not compatible**:
-        - delete/replace (inside **nheqminer/cpu_xenoncat/asm_linux/** directory) with fasm binary compatible with your distro
-        - `cd nheqminer/cpu_xenoncat/asm_linux/`
-        - `sh assemble.sh`
-    - `cd ../../../`
+    - `git clone https://github.com/aionnetwork/aion_miner.git`
+    - `cd aion_miner`
     - `mkdir build && cd build`
-    - `cmake ../nheqminer`
+    - `cmake ../MiningClient`
     - `make -j $(nproc)`
 
 ### Switching Solvers
