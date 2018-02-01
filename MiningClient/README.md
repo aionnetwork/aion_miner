@@ -6,6 +6,7 @@ This repo contains reference CPU and CUDA miners for the AION testnet. The refer
 
 ### Dependencies:
   - Boost 1.62+
+  - python-dev 2.7.11
 
 ## Windows:
 
@@ -16,11 +17,17 @@ Work in progress.
 Working solvers CPU_TROMP, CUDA_TROMP
 
 ### General instructions:
+  - Install Boost 1.62+ example
+    - `wget https://dl.bintray.com/boostorg/release/1.66.0/source/boost_1_66_0.tar.bz2`
+    - `tar --bzip2 -xf /path/to/boost_1_61_0.tar.bz2`
+    - `cd boost_1_66_0`
+    - `./bootstrap.sh`
+    - `./b2 install (Run under sudo if not root)`
   - Install **CUDA SDK v9** (make sure you have cuda libraries in **LD_LIBRARY_PATH** and cuda toolkit bins in **PATH**)
     - example on Ubuntu:
-    - LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/cuda-9.0/lib64:/usr/local/cuda-9.0/lib64/stubs"
-    - PATH="$PATH:/usr/local/cuda-9.0/"
-    - PATH="$PATH:/usr/local/cuda-9.0/bin"
+    - `LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/cuda-9.0/lib64:/usr/local/cuda-9.0/lib64/stubs"`
+    - `PATH="$PATH:/usr/local/cuda-9.0/"`
+    - `PATH="$PATH:/usr/local/cuda-9.0/bin"`
 
   - Use Boost 1.62+ (if it is not available from the repos you will have to download and build it yourself)
   - CMake v3.5 (if it is not available from the repos you will have to download and build it yourself)
@@ -88,3 +95,4 @@ Example to run benchmark on your GPU:
 
 
         
+
