@@ -2,13 +2,26 @@
 
 This repo contains reference CPU and CUDA miners for the AION testnet. The reference miners have been specifically designed to be used in conjunction with the provided reference mining pool, future versions will be adapted to join public pools. 
 
-# Build instructions:
+# System Requirements
+  - Ubuntu 16.04+
+  - CUDA 9.0 compatible driver (NVIDIA 387.34+)
 
-### Dependencies:
+# Quick start guide
+
+  - Download a pre-built miner binary from the aion_miner ([release](https://github.com/aionnetwork/aion_miner/releases)) page.
+  - Unpack the miner.
+    ```
+    tar xvjf aionminer-<TYPE>-<VERSION>.bz2
+    ```
+  - **Note:** When using the pre-built miner the CPU executable will be `aionminer-cpu` while the CUDA executable will be `aionminer`. When building from source the executable will be called `aionminer` for both CPU and CUDA builds. 
+
+# Build instructions
+
+### Dependencies
   - python-dev 2.7.11+
   - Boost 1.62+
 
-## Windows:
+## Windows
 
 Windows builds are not currently supported.
 
@@ -16,7 +29,7 @@ Windows builds are not currently supported.
 Work in progress.
 Working solvers CPU_TROMP, CUDA_TROMP
 
-### General instructions:
+### General instructions
   - Install Boost 1.66 example
     ```bash
     wget https://dl.bintray.com/boostorg/release/1.66.0/source/boost_1_66_0.tar.bz2
@@ -55,7 +68,7 @@ Working solvers CPU_TROMP, CUDA_TROMP
 - Toggle ON/OFF settings on lines 8 and 9 to enable/disable solvers. Rebuild project after each toggle.
 - Only a **single** solver should be used at a time.
 
-# Run instructions:
+# Run instructions
 
 Parameters: 
 
@@ -93,11 +106,11 @@ NVIDIA CUDA settings
 
 Run AION CPU miner with 4 threads connecting to a mining pool running locally, listening on port 3333 for incoming connections.
 
-```./aionminer -t 4 -l 127.0.0.1:3333```
+```./aionminer-cpu -t 4 -l 127.0.0.1:3333```
 
 Example to run benchmark on your CPU (Single thread):
 
-```./aionminer -b -t 1```
+```./aionminer-cpu -b -t 1```
 
 ### GPU Example
 
