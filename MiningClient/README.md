@@ -17,17 +17,21 @@ Work in progress.
 Working solvers CPU_TROMP, CUDA_TROMP
 
 ### General instructions:
-  - Install Boost 1.62+ example
-    - `wget https://dl.bintray.com/boostorg/release/1.66.0/source/boost_1_66_0.tar.bz2`
-    - `tar --bzip2 -xf /path/to/boost_1_66_0.tar.bz2`
-    - `cd boost_1_66_0`
-    - `./bootstrap.sh`
-    - `./b2 install (Run under sudo if not root)`
+  - Install Boost 1.66 example
+    ```bash
+    wget https://dl.bintray.com/boostorg/release/1.66.0/source/boost_1_66_0.tar.bz2
+    tar --bzip2 -xf boost_1_66_0.tar.bz2
+    cd boost_1_66_0
+    ./bootstrap.sh
+    sudo ./b2 install
+    ```
   - Install **CUDA SDK v9** (make sure you have cuda libraries in **LD_LIBRARY_PATH** and cuda toolkit bins in **PATH**)
     - example on Ubuntu:
-    - `LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/cuda-9.0/lib64:/usr/local/cuda-9.0/lib64/stubs"`
-    - `PATH="$PATH:/usr/local/cuda-9.0/"`
-    - `PATH="$PATH:/usr/local/cuda-9.0/bin"`
+    ```bash
+    LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/cuda-9.0/lib64:/usr/local/cuda-9.0/lib64/stubs"
+    PATH="$PATH:/usr/local/cuda-9.0/"
+    PATH="$PATH:/usr/local/cuda-9.0/bin"
+    ```
 
   - Use Boost 1.62+ (if it is not available from the repos you will have to download and build it yourself)
   - CMake v3.5 (if it is not available from the repos you will have to download and build it yourself)
@@ -37,12 +41,13 @@ Working solvers CPU_TROMP, CUDA_TROMP
     - By default the **CUDA-Tromp** is enabled however if CUDA is not avalible this must be switch to CPU-Tromp before proceeding. The [Switch Solvers](#switching-solvers) outlines how to switch between solver implementations. 
 
   - To compile the miner; open the terminal and run the following commands:
-    - `git clone https://github.com/aionnetwork/aion_miner.git`
-    - `cd aion_miner`
-    - `mkdir build && cd build`
-    - `cmake ../MiningClient`
-    - `make -j $(nproc)`
-
+    ```bash
+    git clone https://github.com/aionnetwork/aion_miner.git`
+    cd aion_miner
+    mkdir build && cd build
+    cmake ../MiningClient
+    make
+    ```
 ### Switching Solvers
 
 - Navigate to the root of the project directory
