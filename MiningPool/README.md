@@ -29,7 +29,7 @@ The default Aion IP and port binding values are 127.0.0.1 (localhost) port 8545.
 
 #### 1) Clone the repository locally
 
-TODO: Add link
+```git clone https://github.com/aionnetwork/aion_miner.git```
 
 #### 2) Verify the pool has been correctly configured for the Aion RPC connections
 - Navigate to the pool_configs folder and open aion.json.
