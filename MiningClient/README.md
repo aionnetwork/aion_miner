@@ -108,4 +108,3 @@ Example to run benchmark on your GPU (GPU 0, CUDA-Tromp solver):
 
         
 
-
