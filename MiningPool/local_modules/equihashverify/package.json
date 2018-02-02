@@ -1,0 +1,12 @@
+{
+    "name": "equihashverify",
+    "version": "0.0.1",
+    "author": "ross",
+    "main": "equihashverify",
+    "bundleDependencies": true,
+    "dependencies": {
+        "bindings": "*",
+        "nan": "*",
+        "node-gyp": "*"
+    }
+}

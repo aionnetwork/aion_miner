@@ -1,0 +1,96 @@
+{
+    "logLevel": "debug",
+
+    "logColors": true,
+
+    "__cliPort": "blocknotify messages are sent to NOMP through this",
+    "cliPort": 17117,
+
+    "clustering": {
+        "enabled": false,
+        "forks": "auto"
+    },
+
+    "__defaultPoolConfigs": "pool config file will inherit these default values if they are not set",
+    "defaultPoolConfigs": {
+
+        "__blockRefreshInterval": "Poll RPC daemons for new blocks every this many milliseconds.",
+        "blockRefreshInterval": 1000,
+
+        "__jobRebroadcastTimeout": "If no new blocks are available for this many seconds update and rebroadcast job.",
+        "jobRebroadcastTimeout": 55,
+
+        "__connectionTimeout": "Disconnect workers that haven't submitted shares for this many seconds.",
+        "connectionTimeout": 600,
+
+        "__emitInvalidBlockHashes": "(For MPOS mode) Store the block hashes for shares that aren't block candidates.",
+        "emitInvalidBlockHashes": false,
+
+        "__validateWorkerUsername": "This option will only authenticate miners using an address or mining key.",
+        "validateWorkerUsername": true,
+
+        "_tcpProxyProtocol": "",
+        "tcpProxyProtocol": false,
+
+        "_hasSubmitMethod": "",
+        "hasSubmitMethod": true,
+
+        "banning": {
+            "enabled": true,
+            "time": 600,
+            "invalidPercent": 50,
+            "checkThreshold": 500,
+            "purgeInterval": 300
+        },
+        "redis": {
+            "host": "127.0.0.1",
+            "port": 6379
+        }
+    },
+    "website": {
+        "enabled": true,
+        "host": "0.0.0.0",
+        "port": 8080,
+        "stratumHost": "localhost",
+        "stats": {
+            "updateInterval": 60,
+            "historicalRetention": 43200,
+            "hashrateWindow": 300
+        },
+        "adminCenter": {
+            "enabled": false,
+            "password": "password"
+        }
+    },
+    "redis": {
+        "host": "127.0.0.1",
+        "port": 6379
+    },
+    "switching": {
+        "switch0": {
+            "enabled": true,
+            "algorithm": "equihash",
+            "ports": {
+                "3333": {
+                    "diff": 10,
+                    "varDiff": {
+                        "minDiff": 16,
+                        "maxDiff": 512,
+                        "targetTime": 15,
+                        "retargetTime": 90,
+                        "variancePercent": 30
+                    }
+                }
+            }
+        }
+    },
+    "profitSwitch": {
+        "enabled": false,
+        "updateInterval": 600,
+        "depth": 0.90,
+        "usePoloniex": true,
+        "useCryptsy": true,
+        "useMintpal": true,
+        "useBittrex": true
+    }
+}
