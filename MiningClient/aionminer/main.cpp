@@ -65,8 +65,8 @@ MinerFactory *_MinerFactory = nullptr;
 // stratum client sig
 static AionStratumClient* scSig = nullptr;
 
-extern "C" void stratum_sigint_handler(int signum) 
-{ 
+extern "C" void stratum_sigint_handler(int signum)
+{
 	if (scSig) scSig->disconnect();
 	if (_MinerFactory) _MinerFactory->ClearAllSolvers();
 }
@@ -206,7 +206,7 @@ void start_mining(int api_port, const std::string& host, const std::string& port
 			api = nullptr;
 		}
 	}
-	
+
 	AionMiner miner(i_solvers);
 	AionStratumClient sc{
 		io_service, &miner, host, port, user, password, 0, 0
@@ -229,8 +229,8 @@ void start_mining(int api_port, const std::string& host, const std::string& port
 			BOOST_LOG_TRIVIAL(info) << CL_YLW "Speed [" << INTERVAL_SECONDS << " sec]: " <<
 				speed.GetHashSpeed() << " I/s, " <<
 				speed.GetSolutionSpeed() << " Sols/s" <<
-				//accepted << " AS/min, " << 
-				//(allshares - accepted) << " RS/min" 
+				//accepted << " AS/min, " <<
+				//(allshares - accepted) << " RS/min"
 				CL_N;
 		}
 		if (api) while (api->poll()) {}
@@ -247,16 +247,14 @@ int main(int argc, char* argv[])
 #endif
 
 	std::cout << std::endl;
-	std::cout << "\t============================= aion.network =============================" << std::endl;
-	std::cout << "\t\t\tEquihash CPU&GPU Miner for AION v" STANDALONE_MINER_VERSION << std::endl;
-	std::cout << "\tThanks to NiceHash and Zcash developers for providing base of the code." << std::endl;
-	std::cout << "\t\t    Special thanks to tromp, xenoncat and djeZo for providing "<< std::endl;
-	std::cout << "\t\t      optimized CPU and CUDA equihash solvers." << std::endl;
-	std::cout << "\t============================= aion.network =============================" << std::endl;
+	std::cout << "\t============================= aion reference miner======================" << std::endl;
+	std::cout << "\t\t\tEquihash<210,9> CPU&GPU Miner for AION v" STANDALONE_MINER_VERSION << std::endl;
+	std::cout << "\t\t\tBase on NiceHash equihash miner." << std::endl;
+	std::cout << "\t============================= aion reference miner======================" << std::endl;
 	std::cout << std::endl;
 
 	std::string location = "localhost:3333";
-	std::string user = "34HKWdzLxWBduUfJE9JxaFhoXnfC6gmePG";
+	std::string user = "0x0000000000000000000000000000000000000000000000000000000000000000";
 	std::string password = "x";
 	int num_threads = 0;
 	bool benchmark = false;
@@ -266,10 +264,7 @@ int main(int argc, char* argv[])
 	int cuda_device_count = 0;
 	int cuda_bc = 0;
 	int cuda_tbpc = 0;
-	int opencl_platform = 0;
-	int opencl_device_count = 0;
 	int force_cpu_ext = -1;
-	int opencl_t = 0;
 
 	for (int i = 1; i < argc; ++i)
 	{
@@ -335,53 +330,6 @@ int main(int argc, char* argv[])
 			}
 			break;
 		}
-		//case 'o':
-		//{
-		//	switch (argv[i][2])
-		//	{
-		//	case 'i':
-		//		print_opencl_info();
-		//		return 0;
-		//	case 'v':
-		//		use_old_xmp = atoi(argv[++i]);
-		//		break;
-		//	case 'p':
-		//		opencl_platform = std::stol(argv[++i]);
-		//		break;
-		//	case 'd':
-		//		while (opencl_device_count < 8 && i + 1 < argc)
-		//		{
-		//			try
-		//			{
-		//				opencl_enabled[opencl_device_count] = std::stol(argv[++i]);
-		//				++opencl_device_count;
-		//			}
-		//			catch (...)
-		//			{
-		//				--i;
-		//				break;
-		//			}
-		//		}
-		//		break;
-		//	case 't':
-		//		while (opencl_t < 8 && i + 1 < argc)
-		//		{
-		//			try
-		//			{
-		//				opencl_threads[opencl_t] = std::stol(argv[++i]);
-		//				++opencl_t;
-		//			}
-		//			catch (...)
-		//			{
-		//				--i;
-		//				break;
-		//			}
-		//		}
-		//		break;
-		//		// TODO extra parameters for OpenCL
-		//	}
-		//	break;
-		//}
 		case 'l':
 			location = argv[++i];
 			break;
@@ -453,7 +401,7 @@ int main(int argc, char* argv[])
 
 	try
 	{
-		_MinerFactory = new MinerFactory(use_avx == 1, use_old_cuda == 0, use_old_xmp == 0);
+		_MinerFactory = new MinerFactory();
 		if (!benchmark)
 		{
 			if (user.length() == 0)
@@ -464,16 +412,16 @@ int main(int argc, char* argv[])
 
 			size_t delim = location.find(':');
 			std::string host = delim != std::string::npos ? location.substr(0, delim) : location;
-			std::string port = delim != std::string::npos ? location.substr(delim + 1) : "2142";
+			std::string port = delim != std::string::npos ? location.substr(delim + 1) : "3333";
 
 			start_mining(api_port, host, port, user, password,
 				scSig,
 				_MinerFactory->GenerateSolvers(num_threads, cuda_device_count, cuda_enabled, cuda_blocks,
-				cuda_tpb, opencl_device_count, opencl_platform, opencl_enabled, opencl_threads));
+				cuda_tpb));
 		}
 		else
 		{
-			Solvers_doBenchmark(num_hashes, _MinerFactory->GenerateSolvers(num_threads, cuda_device_count, cuda_enabled, cuda_blocks, cuda_tpb, opencl_device_count, opencl_platform, opencl_enabled, opencl_threads));
+			Solvers_doBenchmark(num_hashes, _MinerFactory->GenerateSolvers(num_threads, cuda_device_count, cuda_enabled, cuda_blocks, cuda_tpb));
 		}
 	}
 	catch (std::runtime_error& er)
