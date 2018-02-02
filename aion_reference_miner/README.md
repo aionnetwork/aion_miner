@@ -4,7 +4,7 @@ This repo contains reference CPU and CUDA miners for the AION testnet. The refer
 
 # System Requirements
   - Ubuntu 16.04+
-  - CUDA 9.0 compatible driver (NVIDIA 387.34+)
+  - CUDA 9.0 compatible driver (NVIDIA 387.34+) for GPU based mining. 
 
 # Quick start guide
 
