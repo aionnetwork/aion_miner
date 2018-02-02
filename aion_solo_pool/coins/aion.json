@@ -1,0 +1,7 @@
+{
+    "name": "aion",
+    "symbol": "NGR",
+    "algorithm": "equihash",
+    "reward": "POW",
+    "multiplier": 1
+}

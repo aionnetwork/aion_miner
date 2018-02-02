@@ -1,0 +1,35 @@
+{
+    "result":{
+        "version":2,
+        "previousblockhash":"00000000000000075f2f454573766ffae69fe41d6c7ccfcabbf8588fcd80ed52",
+        "transactions":[
+                  {     
+                        "data":"0100000001cba672d0bfdbcc441d171ef0723a191bf050932c6f8adc8a05b0cac2d1eb022f010000006c493046022100a23472410d8fd7eabf5c739bdbee5b6151ff31e10d5cb2b52abeebd5e9c06977022100c2cdde5c632eaaa1029dff2640158aaf9aab73fa021ed4a48b52b33ba416351801210212ee0e9c79a72d88db7af3fed18ae2b7ca48eaed995d9293ae0f94967a70cdf6ffffffff02905f0100000000001976a91482db4e03886ee1225fefaac3ee4f6738eb50df9188ac00f8a093000000001976a914c94f5142dd7e35f5645735788d0fe1343baf146288ac00000000",
+                        "hash":"7c90a5087ac4d5b9361d47655812c89b4ad0dee6ecd5e08814d00ce7385aa317",
+                        "depends":[],
+                        "fee":10000,
+                        "sigops":2
+                  },
+                  ...
+            ],
+        "coinbaseaux":{
+            "flags":"062f503253482f"
+        },
+        "coinbasevalue":2501100000,
+        "target":"0000000000000026222200000000000000000000000000000000000000000000",
+        "mintime":1379549850,
+        "mutable":[
+            "time",
+            "transactions",
+            "prevblock"
+        ],
+        "noncerange":"00000000ffffffff",
+        "sigoplimit":20000,
+        "sizelimit":1000000,
+        "curtime":1379553872,
+        "bits":"19262222",
+        "height":258736
+    },
+    "error":null,
+    "id":"curltest"
+}

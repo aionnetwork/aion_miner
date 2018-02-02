@@ -1,0 +1,12 @@
+{
+    "name": "stratum-pool",
+    "version": "0.0.1",
+    "author": "chris",
+    "main": "lib/index.js",
+    "bundleDependencies": true,
+    "dependencies": {
+        "async": "*",
+        "base58-native": "*",
+        "bignum": "*"
+    }
+}

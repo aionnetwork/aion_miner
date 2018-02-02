@@ -1,0 +1,14 @@
+{
+    "name": "blake2",
+    "version": "1.4.0",
+    "author": "ross",
+    "main": "index.js",
+    "bundleDependencies": true,
+    "dependencies": {
+        "nan": "*"
+    },
+    "devDependencies": {
+        "eslint": "*",
+        "mocha": "*"
+    }
+}
