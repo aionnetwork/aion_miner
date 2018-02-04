@@ -1,4 +1,5 @@
 nohup bash ./redis.sh > /dev/null 2>&1 &
+sleep .5
 echo "running redis server" && echo $PWD &&
 export PATH=$PATH:$PWD/node/bin &&
 npm install &&

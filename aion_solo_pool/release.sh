@@ -13,7 +13,7 @@ tar -xf ./node.tar.gz &&
 mv ./node-v8.9.4-linux-x64 ./node &&
 
 #clean
-rm -r ./redis.tar.gz ./node.tar.gz &&
+rm -r ./redis.tar.gz ./node.tar.gz ./redis ./node &&
 
 #pack
 node node_modules/gulp/bin/gulp.js release
