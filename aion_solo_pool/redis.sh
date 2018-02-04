@@ -1,0 +1,1 @@
+cd ./redis && make && src/redis-server

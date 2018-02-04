@@ -11,7 +11,7 @@
         "aion"
     ],
     "license": "GPL-2.0",
-    "author": "King Chris",
+    "author": "ross",
     "main": "init.js",
     "bin": {
         "block-notify": "./scripts/blockNotify.js"
@@ -35,5 +35,11 @@
         "redis": "*",
         "request": "*",
         "bindings": "*"
+    },
+    "devDependencies": {
+        "gulp": "*",
+        "gulp-tar": "*",
+        "gulp-gzip": "*",
+        "moment": "*"
     }
 }
