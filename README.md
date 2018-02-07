@@ -15,5 +15,7 @@ The solo mining pool may be found [here](https://github.com/aionnetwork/aion_min
 
 The reference mining clients may be found [here](https://github.com/aionnetwork/aion_miner/tree/master/aion_reference_miner).
 
+**Note** In order to use the reference mining clients the the solo_mining_pool must be configured and run in parallel with the reference minining clients. The solo mining pool serves as the connection between the mining client and the aion kernel. 
+
 Additionally, recompiled releases for both the mining pool as well as mining clients may be found under the [releases](https://github.com/aionnetwork/aion_miner/releases) page as they become available. 
 
