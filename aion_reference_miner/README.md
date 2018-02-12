@@ -58,14 +58,14 @@ Working solvers CPU_TROMP, CUDA_TROMP
     git clone https://github.com/aionnetwork/aion_miner.git`
     cd aion_miner
     mkdir build && cd build
-    cmake ../MiningClient
+    cmake ../aion_reference_miner
     make
     ```
 ### Switching Solvers
 
 - Navigate to the root of the project directory
 - Open the CMakelists.txt file
-- Toggle ON/OFF settings on lines 8 and 9 to enable/disable solvers. Rebuild project after each toggle.
+- Toggle ON/OFF settings on lines 7 and 8 to enable/disable solvers. Rebuild project after each toggle.
 - Only a **single** solver should be used at a time.
 
 # Run instructions
@@ -106,11 +106,11 @@ NVIDIA CUDA settings
 
 Run AION CPU miner with 4 threads connecting to a mining pool running locally, listening on port 3333 for incoming connections.
 
-```./aionminer-cpu -t 4 -l 127.0.0.1:3333```
+```./aionminer -t 4 -l 127.0.0.1:3333```
 
 Example to run benchmark on your CPU (Single thread):
 
-```./aionminer-cpu -b -t 1```
+```./aionminer -b -t 1```
 
 ### GPU Example
 
