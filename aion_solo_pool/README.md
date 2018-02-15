@@ -52,6 +52,10 @@ Eg. Using default settings the configuration should be:
 #### 3) Compile the Equihash Verifier
 
 - Navigate to ```local_modules/equihashverify```
+- Install npm dependencies
+```
+npm install
+```
 - Configure node-gyp to build the verifier by running the command: 
 ```
 node-gyp configure
