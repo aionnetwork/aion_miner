@@ -49,19 +49,19 @@ Eg. Using default settings the configuration should be:
     ]
 ```
 
-#### 5) Install required node modules
+#### 3) Install node modules
 
-- Navigate to the root of the aion_solo_pool directory.
+- Navigate to the root of the pool directory.
 - Run the command 
 ```
 npm install
 ``` 
-and allow all required npm modules to be installed in the node_modules folder. Additionally, this process should build all npm modules in subsequnt steps.
+and allow all required npm modules to be installed in the node_modules folder.
 
-#### 4) Verify equihash verifier build
+#### 4) Verify the equihash verifier build
 
 - Navigate to ```local_modules/equihashverify```
-- Run the verification test with the following command 
+- Run test with the following command 
 ```
 node test.js
 ```
@@ -84,7 +84,7 @@ true
     ```
     node-gyp rebuild
     ``` 
-    and then repeating the test. 
+    and then repeating the test.
 
 
 #### 5) Start Redis Server
