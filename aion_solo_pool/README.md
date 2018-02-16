@@ -76,7 +76,9 @@ true
 9c a3 bb e6 6b b1 5f 49
 ```
 
-- If the test fails to run attempt to reconfigure to dynamic linker using 
+**Note:**
+
+The test may fail if libsodium was installed during the solo pool setup, to resolve this attempt to reconfigure to dynamic linker using 
     ```
     sudo ldconfig -v
     ```
@@ -125,7 +127,7 @@ At this stage the mining pool is ready to receive client connections and to dist
 #### 9) Validate client connections (Optional)
 
 - The pool is configured to listen for client connections on port 3333 by default. This may be changed in the config.json file located in the root of the pool folder. 
-- Connect a client to the pool using a location of **127.0.0.1:3333**. 
+- Connect one of the solo mining clients to the pool using a location of **127.0.0.1:3333**. 
 - Once connected the client should begin receiving work within several seconds; if receiving work the pool has been successfully configured. 
 
 License

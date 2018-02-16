@@ -2,6 +2,8 @@
 
 This repo contains reference CPU and CUDA miners for the AION testnet. The reference miners have been specifically designed to be used in conjunction with the provided reference mining pool, future versions will be adapted to join public pools. 
 
+**Note** The precompiled versions of the CPU and GPU miners have been compiled with AVX CPU features enabled. AVX features may not be supported on all CPU models, [this](#modifying-compiler-features) section outlines details to enable and disable AVX features during the build process. In order to use non-AVX versions of the miners, the miners must be built from source. 
+
 # System Requirements
   - Ubuntu 16.04+
   - CUDA 9.0 compatible driver (NVIDIA 387.34+) for GPU based mining. 
@@ -67,6 +69,18 @@ Working solvers CPU_TROMP, CUDA_TROMP
 - Open the CMakelists.txt file
 - Toggle ON/OFF settings on lines 7 and 8 to enable/disable solvers. Rebuild project after each toggle.
 - Only a **single** solver should be used at a time.
+
+### Modifying Compiler Features
+
+- Navigate to the root of the project directory
+- Open the CMakelists.txt file
+- Navigate to the Linux section at line 21.
+- To disable AVX features:
+  - Comment lines 26 and 27 by places a # in from of the lines.
+  - Uncomment lines 23 and 24 by removing # at the start of the lines. 
+- To enable AVX features:
+  - Uncomment lines 26 and 27 by places a # in from of the lines.
+  - Comment lines 23 and 24 by places a # in from of the lines. 
 
 # Run instructions
 
