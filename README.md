@@ -1,4 +1,4 @@
-# Aion Miner
+﻿# Aion Miner
 
 ### About
 Welcome to the Aion mining repository, this repository will contain documentation, mining details and reference implementations of CPU and CUDA miners for the Aion blockchain. 
@@ -18,4 +18,3 @@ The reference mining clients may be found [here](https://github.com/aionnetwork/
 **Note** In order to use the reference mining clients the the solo_mining_pool must be configured and run in parallel with the reference minining clients. The solo mining pool serves as the connection between the mining client and the aion kernel. 
 
 Additionally, recompiled releases for both the mining pool as well as mining clients may be found under the [releases](https://github.com/aionnetwork/aion_miner/releases) page as they become available. 
-
