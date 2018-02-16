@@ -19,3 +19,6 @@ The reference mining clients may be found [here](https://github.com/aionnetwork/
 
 Additionally, recompiled releases for both the mining pool as well as mining clients may be found under the [releases](https://github.com/aionnetwork/aion_miner/releases) page as they become available. 
 
+### Reference Miners
+
+In addition to providing a miner within the Aion kernel, two reference miners and a solo mining pool have been provided. 
