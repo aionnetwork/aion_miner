@@ -13,49 +13,13 @@
 // NDSS ’16, 21-24 February 2016, San Diego, CA, USA
 // https://www.internetsociety.org/sites/default/files/blogs-media/equihash-asymmetric-proof-of-work-based-generalized-birthday-problem.pdf
 
-/*******************************************************************************
- * Copyright (c) 2017-2018 Aion foundation.
- *
- *     This file is part of the aion network project.
- *
- *     The aion network project is free software: you can redistribute it
- *     and/or modify it under the terms of the GNU General Public License
- *     as published by the Free Software Foundation, either version 3 of
- *     the License, or any later version.
- *
- *     The aion network project is distributed in the hope that it will
- *     be useful, but WITHOUT ANY WARRANTY; without even the implied
- *     warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *     See the GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with the aion network project source files.
- *     If not, see <https://www.gnu.org/licenses/>.
- *
- *     The aion network project leverages useful source code from other
- *     open source projects. We greatly appreciate the effort that was
- *     invested in these projects and we thank the individual contributors
- *     for their work. For provenance information and contributors
- *     please see <https://github.com/aionnetwork/aion/wiki/Contributors>.
- *
- * Contributors to the aion source files in decreasing order of code volume:
- *     Aion foundation.
- *     <ether.camp> team through the ethereumJ library.
- *     Ether.Camp Inc. (US) team through Ethereum Harmony.
- *     John Tromp through the Equihash solver.
- *     Samuel Neves through the BLAKE2 implementation.
- *     Zcash project team.
- *     Bitcoinj team.
- ******************************************************************************/
-
 #include "endian.h"
 #include "equi210.h"
 
 #include <algorithm>
 #include <iostream>
 #include <stdexcept>
-
-#include <boost/optional.hpp>
+#include <assert.h>
 
 bool verifyEH(const char *hdr, const char *soln, int n, int k){
 
@@ -188,7 +152,6 @@ void CompressArray(const unsigned char* in, size_t in_len,
 // comparison
 void EhIndexToArray(const eh_index i, unsigned char* array)
 {
-    BOOST_STATIC_ASSERT(sizeof(eh_index) == 4);
     eh_index bei = htobe32(i);
     memcpy(array, &bei, sizeof(eh_index));
 }
@@ -197,7 +160,6 @@ void EhIndexToArray(const eh_index i, unsigned char* array)
 // comparison
 eh_index ArrayToEhIndex(const unsigned char* array)
 {
-    BOOST_STATIC_ASSERT(sizeof(eh_index) == 4);
     eh_index bei;
     memcpy(&bei, array, sizeof(eh_index));
     return be32toh(bei);
@@ -206,7 +168,6 @@ eh_index ArrayToEhIndex(const unsigned char* array)
 eh_trunc TruncateIndex(const eh_index i, const unsigned int ilen)
 {
     // Truncate to 8 bits
-    BOOST_STATIC_ASSERT(sizeof(eh_trunc) == 1);
     return (i >> (ilen - 8)) & 0xff;
 }
 
@@ -262,7 +223,6 @@ template<size_t WIDTH> template<size_t W>
 StepRow<WIDTH>::StepRow(const StepRow<W>& a)
 {
     memset(hash,0, sizeof(hash)/sizeof(hash[0]));
-    BOOST_STATIC_ASSERT(W <= WIDTH);
     std::copy(a.hash, a.hash+W, hash);
 }
 
