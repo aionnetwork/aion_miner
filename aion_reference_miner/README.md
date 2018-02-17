@@ -20,6 +20,7 @@ This repo contains reference CPU and CUDA miners for the AION testnet. The refer
 ### Dependencies
   - python-dev 2.7.11+
   - Boost 1.62+
+  - cmake
 
 ## Windows
 
