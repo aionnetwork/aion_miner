@@ -11,6 +11,7 @@ This is an Aion mining pool designed to be used in conjunction with the Aion min
 * **Redis** key-value store v2.6+ ([download and install](http://redis.io/topics/quickstart))
 * **Python v2.7**
 * **make**
+* **boost**
 * **node-gyp** v3.6.2+ ([download and install](https://github.com/nodejs/node-gyp))
 * **libsodium** v1.0.16+ ([download and install](https://download.libsodium.org/doc/installation))
 
@@ -54,6 +55,7 @@ Eg. Using default settings the configuration should be:
 - Navigate to ```local_modules/equihashverify```
 - Configure node-gyp to build the verifier by running the command: 
 ```
+npm install nan
 node-gyp configure
 ```
 The last line out output will say "gyp info okay" if successful. 
@@ -64,6 +66,7 @@ node-gyp build
 The last line out output will say "gyp info okay" if successful.
 - Run test with the following command 
 ```
+npm install bindings
 node test.js
 ```
 - A successful test should output: 
