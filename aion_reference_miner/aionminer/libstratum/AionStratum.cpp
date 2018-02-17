@@ -330,13 +330,14 @@ void static AionMinerThread(AionMiner* miner, int size, int pos,
 					speed.AddHash();
 				};
 
+				// Check for stop
+				if (!miner->minerThreadActive[pos])
+					throw boost::thread_interrupted();
+
 				solver->solve(tequihash_header, tequihash_header_len,
 						(const char*) bNonce.begin(), bNonce.size(), cancelFun,
 						solutionFound, hashDone);
 
-				// Check for stop
-				if (!miner->minerThreadActive[pos])
-					throw boost::thread_interrupted();
 				//boost::this_thread::interruption_point();
 
 				// Update nonce
@@ -498,9 +499,10 @@ void AionMiner::stop() {
 			minerThreadActive[i] = false;
 		for (int i = 0; i < nThreads; i++)
 			minerThreads[i].join();
-		delete minerThreads;
+		delete[] minerThreads;
 		minerThreads = nullptr;
-		delete minerThreadActive;
+		delete[] minerThreadActive;
+		minerThreadActive = nullptr;
 	}
 	/*if (minerThreads) {
 	 minerThreads->interrupt_all();
