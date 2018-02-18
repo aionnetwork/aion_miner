@@ -67,14 +67,17 @@ static AionStratumClient* scSig = nullptr;
 
 extern "C" void stratum_sigint_handler(int signum)
 {
-	if (scSig) scSig->disconnect();
-	if (_MinerFactory) _MinerFactory->ClearAllSolvers();
+	if (scSig) {
+		scSig->disconnect();
+		delete scSig;
+		scSig = nullptr;
+	}
 
-	delete scSig;
-	scSig = nullptr;
-
-	delete _MinerFactory;
-	_MinerFactory = nullptr;
+	if (_MinerFactory) {
+		_MinerFactory->ClearAllSolvers();
+		delete _MinerFactory;
+		_MinerFactory = nullptr;
+	}	
 }
 
 void print_help()
@@ -223,7 +226,6 @@ void start_mining(int api_port, const std::string& host, const std::string& port
 	});
 
 	*handler = sc;
-	signal(SIGINT, stratum_sigint_handler);
 
 	int c = 0;
 	while (sc->isRunning()) {
@@ -251,13 +253,20 @@ int main(int argc, char* argv[])
 #if defined(WIN32) && defined(NDEBUG)
 	system(""); // windows 10 colored console
 #endif
-
 	std::cout << std::endl;
 	std::cout << "\t============================= aion reference miner======================" << std::endl;
 	std::cout << "\t\t\tEquihash<210,9> CPU&GPU Miner for AION v" STANDALONE_MINER_VERSION << std::endl;
 	std::cout << "\t\t\tBase on NiceHash equihash miner." << std::endl;
 	std::cout << "\t============================= aion reference miner======================" << std::endl;
 	std::cout << std::endl;
+
+	// Show help if there are no args provided
+	if (argc == 1) {
+		print_help();
+		return 0;
+	}
+
+	signal(SIGINT, stratum_sigint_handler);
 
 	std::string location = "localhost:3333";
 	std::string user = "0x0000000000000000000000000000000000000000000000000000000000000000";
