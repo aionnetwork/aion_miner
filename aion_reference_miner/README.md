@@ -56,7 +56,7 @@ Working solvers CPU_TROMP, CUDA_TROMP
 
   - To compile the miner; open the terminal and run the following commands:
     ```bash
-    git clone https://github.com/aionnetwork/aion_miner.git`
+    git clone https://github.com/aionnetwork/aion_miner.git
     cd aion_miner
     mkdir build && cd build
     cmake ../aion_reference_miner
