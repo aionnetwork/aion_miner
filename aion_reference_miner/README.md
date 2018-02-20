@@ -20,6 +20,7 @@ This repo contains reference CPU and CUDA miners for the AION testnet. The refer
 ### Dependencies
   - python-dev 2.7.11+
   - Boost 1.62+
+  - cmake
 
 ## Windows
 
@@ -55,7 +56,7 @@ Working solvers CPU_TROMP, CUDA_TROMP
 
   - To compile the miner; open the terminal and run the following commands:
     ```bash
-    git clone https://github.com/aionnetwork/aion_miner.git`
+    git clone https://github.com/aionnetwork/aion_miner.git
     cd aion_miner
     mkdir build && cd build
     cmake ../aion_reference_miner

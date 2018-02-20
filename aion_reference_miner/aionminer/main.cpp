@@ -67,8 +67,17 @@ static AionStratumClient* scSig = nullptr;
 
 extern "C" void stratum_sigint_handler(int signum)
 {
-	if (scSig) scSig->disconnect();
-	if (_MinerFactory) _MinerFactory->ClearAllSolvers();
+	if (scSig) {
+		scSig->disconnect();
+		delete scSig;
+		scSig = nullptr;
+	}
+
+	if (_MinerFactory) {
+		_MinerFactory->ClearAllSolvers();
+		delete _MinerFactory;
+		_MinerFactory = nullptr;
+	}	
 }
 
 void print_help()
@@ -191,7 +200,7 @@ void detect_AVX_and_AVX2()
 void start_mining(int api_port, const std::string& host, const std::string& port,
 	const std::string& user, const std::string& password,
 	//ZcashStratumClient* handler, const std::vector<ISolver *> &i_solvers)
-	AionStratumClient* handler, const std::vector<ISolver *> &i_solvers)
+	AionStratumClient** handler, const std::vector<ISolver *> &i_solvers)
 
 {
 	std::shared_ptr<boost::asio::io_service> io_service(new boost::asio::io_service);
@@ -208,19 +217,18 @@ void start_mining(int api_port, const std::string& host, const std::string& port
 	}
 
 	AionMiner miner(i_solvers);
-	AionStratumClient sc{
+	AionStratumClient *sc = new AionStratumClient {
 		io_service, &miner, host, port, user, password, 0, 0
 	};
 
 	miner.onSolutionFound([&](const EquihashSolution& solution, const std::string& jobid) {
-		return sc.submit(&solution, jobid);
+		return sc->submit(&solution, jobid);
 	});
 
-	handler = &sc;
-	signal(SIGINT, stratum_sigint_handler);
+	*handler = sc;
 
 	int c = 0;
-	while (sc.isRunning()) {
+	while (sc->isRunning()) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 		if (++c % 1000 == 0)
 		{
@@ -245,13 +253,20 @@ int main(int argc, char* argv[])
 #if defined(WIN32) && defined(NDEBUG)
 	system(""); // windows 10 colored console
 #endif
-
 	std::cout << std::endl;
 	std::cout << "\t============================= aion reference miner======================" << std::endl;
 	std::cout << "\t\t\tEquihash<210,9> CPU&GPU Miner for AION v" STANDALONE_MINER_VERSION << std::endl;
 	std::cout << "\t\t\tBase on NiceHash equihash miner." << std::endl;
 	std::cout << "\t============================= aion reference miner======================" << std::endl;
 	std::cout << std::endl;
+
+	// Show help if there are no args provided
+	if (argc == 1) {
+		print_help();
+		return 0;
+	}
+
+	signal(SIGINT, stratum_sigint_handler);
 
 	std::string location = "localhost:3333";
 	std::string user = "0x0000000000000000000000000000000000000000000000000000000000000000";
@@ -415,7 +430,7 @@ int main(int argc, char* argv[])
 			std::string port = delim != std::string::npos ? location.substr(delim + 1) : "3333";
 
 			start_mining(api_port, host, port, user, password,
-				scSig,
+				&scSig,
 				_MinerFactory->GenerateSolvers(num_threads, cuda_device_count, cuda_enabled, cuda_blocks,
 				cuda_tpb));
 		}
