@@ -21,8 +21,14 @@ This repo contains reference CPU and CUDA miners for the AION testnet. The refer
 
 ### Dependencies
   - python-dev 2.7.11+
-  - Boost 1.62+
-  - cmake
+  - Boost 1.65.1 (Higher versions are not currently supported by CMake at this time). The following libraries must be built:
+    - system
+    - log
+    - date_time
+    - filesystem
+    - thread
+    - program_options
+  - cmake 3.10.0
 
 ## Windows
 
@@ -33,12 +39,12 @@ Work in progress.
 Working solvers CPU_TROMP, CUDA_TROMP
 
 ### General instructions
-  - Install Boost 1.66 example
+  - Install Boost 1.65.1
     ```bash
-    wget https://dl.bintray.com/boostorg/release/1.66.0/source/boost_1_66_0.tar.bz2
-    tar --bzip2 -xf boost_1_66_0.tar.bz2
-    cd boost_1_66_0
-    ./bootstrap.sh
+    wget https://dl.bintray.com/boostorg/release/1.65.1/source/boost_1_65_1.tar.bz2
+    tar xf boost_1_61_1.tar.bz2
+    cd boost_1_65_1
+    ./bootstrap.sh --with-libraries=system,log,date_time,filesystem,thread,program_options
     sudo ./b2 install
     ```
   - Install **CUDA SDK v9** (make sure you have cuda libraries in **LD_LIBRARY_PATH** and cuda toolkit bins in **PATH**)
@@ -49,8 +55,8 @@ Working solvers CPU_TROMP, CUDA_TROMP
     PATH="$PATH:/usr/local/cuda-9.0/bin"
     ```
 
-  - Use Boost 1.62+ (if it is not available from the repos you will have to download and build it yourself)
-  - CMake v3.5 (if it is not available from the repos you will have to download and build it yourself)
+  - Use Boost 1.65.1+ (if it is not available from the repos you will have to download and build it yourself)
+  - CMake v3.10 (if it is not available from the repos you will have to download and build it yourself)
   - Currently support only static building (CUDA_TROMP are enabled by default, check **CMakeLists.txt** in **aion_miner** root folder)
 
   - Before proceeding ensure the correct solver is enabled
@@ -76,44 +82,36 @@ Working solvers CPU_TROMP, CUDA_TROMP
 - Navigate to the root of the project directory
 - Open the CMakelists.txt file
 - Navigate to the Linux section at line 21.
-- To disable AVX features:
+- To disable AVX features and enable SSE2:
   - Comment lines 26 and 27 by places a # in from of the lines.
   - Uncomment lines 23 and 24 by removing # at the start of the lines. 
-- To enable AVX features:
+- To enable AVX features and disable SSE2:
   - Uncomment lines 26 and 27 by places a # in from of the lines.
   - Comment lines 23 and 24 by places a # in from of the lines. 
 
 # Run instructions
 
 Parameters: 
-
-	-h Print this help message and quits
-
-	-l [location]	Stratum server:port
-
-	-u [username]	Username (aion address)
-
-	-a [port]	Local API port (default: 0 = do not bind)
-
-	-d [level]	Debug print level (0 = print all, 5 = fatal only, default: 2)
-  
-	-b [hashes]	Run in benchmark mode (default: 200 iterations)
-
-CPU settings
-
-	-t [num_thrds]	Number of CPU threads
-
-	-e [ext]	Force CPU ext (0 = SSE2, 1 = AVX, 2 = AVX2)
-
-NVIDIA CUDA settings
-
-	-ci		CUDA info
-
-	-cd [devices]	Enable CUDA mining on spec. devices
-
-	-cb [blocks]	Number of blocks
-
-	-ct [tpb]	Number of threads per block
+```
+  -h [ --help ]                   Print help messages
+  -l [ --location ] arg           Stratum server:port
+  -u [ --username ] arg           Username (Aion Addess)
+  -a [ --apiPort ] arg            Local port (default 0 = do not bind)
+  -d [ --level ] arg              Debug print level (0 = print all, 5 = fatal 
+                                  only, default: 2)
+  -b [ --benchmark ] [=arg(=200)] Run in benchmark mode (default: 200 
+                                  iterations)
+CPU Parameters:
+  -t [ --threads ] arg            Number of CPU threads
+  -e [ --ext ] arg                Force CPU ext (0 = SSE2, 1 = AVX, 2 = AVX2)
+CUDA Parameters:
+  --ci                            Show CUDA info
+  --cv arg                        CUDA solver (0 = djeZo, 1 = tromp, default=1)
+  --cd arg                        Enable mining on spec. devices
+  --cb arg                        Number of blocks (per device)
+  --ct arg                        Number of threads per block (per device)
+```
+**Note** All CUDA parameters may also be used with a single "-".
 
 ## Run Examples
 
@@ -126,6 +124,10 @@ Run AION CPU miner with 4 threads connecting to a mining pool running locally, l
 Example to run benchmark on your CPU (Single thread):
 
 ```./aionminer -b -t 1```
+
+Example to run benchmark on your CPU using 300 iterations (Single thread):
+
+```./aionminer -b 300 -t 1```
 
 ### GPU Example
 
