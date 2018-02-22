@@ -86,44 +86,45 @@ extern "C" void stratum_sigint_handler(int signum)
 	exit(0);
 }
 
-void print_help()
-{
-	std::cout << "Parameters: " << std::endl;
-	std::cout << "\t-h\t\tPrint this help and quit" << std::endl;
-#ifndef ZCASH_POOL
-	std::cout << "\t-l [location]\tStratum server:port" << std::endl;
-	std::cout << "\t-u [username]\tUsername (bitcoinaddress)" << std::endl;
-#else
-	std::cout << "\t-l [location]\tLocation (eu, usa)" << std::endl;
-	std::cout << "\t-u [username]\tUsername (Zcash wallet address)" << std::endl;
-#endif
-	std::cout << "\t-a [port]\tLocal API port (default: 0 = do not bind)" << std::endl;
-	std::cout << "\t-d [level]\tDebug print level (0 = print all, 5 = fatal only, default: 2)" << std::endl;
-	std::cout << "\t-b [hashes]\tRun in benchmark mode (default: 200 iterations)" << std::endl;
-	std::cout << std::endl;
-	std::cout << "CPU settings" << std::endl;
-	std::cout << "\t-t [num_thrds]\tNumber of CPU threads" << std::endl;
-	std::cout << "\t-e [ext]\tForce CPU ext (0 = SSE2, 1 = AVX, 2 = AVX2)" << std::endl;
-	std::cout << std::endl;
-	std::cout << "NVIDIA CUDA settings" << std::endl;
-	std::cout << "\t-ci\t\tCUDA info" << std::endl;
-	std::cout << "\t-cv [ver]\tSet CUDA solver (0 = djeZo, 1 = tromp)" << std::endl;
-	std::cout << "\t-cd [devices]\tEnable CUDA mining on spec. devices" << std::endl;
-	std::cout << "\t-cb [blocks]\tNumber of blocks" << std::endl;
-	std::cout << "\t-ct [tpb]\tNumber of threads per block" << std::endl;
-	std::cout << "Example: -cd 0 2 -cb 12 16 -ct 64 128" << std::endl;
-	std::cout << std::endl;
-	//std::cout << "OpenCL settings" << std::endl;
-	//std::cout << "\t-oi\t\tOpenCL info" << std::endl;
-	//std::cout << "\t-ov [ver]\tSet OpenCL solver (0 = silentarmy, 1 = xmp)" << std::endl;
-	//std::cout << "\t-op [platf]\tSet OpenCL platform to selecd platform devices (-od)" << std::endl;
-	//std::cout << "\t-od [devices]\tEnable OpenCL mining on spec. devices (specify plafrom number first -op)" << std::endl;
-	//std::cout << "\t-ot [threads]\tSet number of threads per device" << std::endl;
-	////std::cout << "\t-cb [blocks]\tNumber of blocks" << std::endl;
-	////std::cout << "\t-ct [tpb]\tNumber of threads per block" << std::endl;
-	//std::cout << "Example: -op 2 -od 0 2" << std::endl; //-cb 12 16 -ct 64 128" << std::endl;
-	std::cout << std::endl;
-}
+// No longer used; kept for historical reference
+// void print_help()
+// {
+// 	std::cout << "Parameters: " << std::endl;
+// 	std::cout << "\t-h\t\tPrint this help and quit" << std::endl;
+// #ifndef ZCASH_POOL
+// 	std::cout << "\t-l [location]\tStratum server:port" << std::endl;
+// 	std::cout << "\t-u [username]\tUsername (bitcoinaddress)" << std::endl;
+// #else
+// 	std::cout << "\t-l [location]\tLocation (eu, usa)" << std::endl;
+// 	std::cout << "\t-u [username]\tUsername (Zcash wallet address)" << std::endl;
+// #endif
+// 	std::cout << "\t-a [port]\tLocal API port (default: 0 = do not bind)" << std::endl;
+// 	std::cout << "\t-d [level]\tDebug print level (0 = print all, 5 = fatal only, default: 2)" << std::endl;
+// 	std::cout << "\t-b [hashes]\tRun in benchmark mode (default: 200 iterations)" << std::endl;
+// 	std::cout << std::endl;
+// 	std::cout << "CPU settings" << std::endl;
+// 	std::cout << "\t-t [num_thrds]\tNumber of CPU threads" << std::endl;
+// 	std::cout << "\t-e [ext]\tForce CPU ext (0 = SSE2, 1 = AVX, 2 = AVX2)" << std::endl;
+// 	std::cout << std::endl;
+// 	std::cout << "NVIDIA CUDA settings" << std::endl;
+// 	std::cout << "\t-ci\t\tCUDA info" << std::endl;
+// 	std::cout << "\t-cv [ver]\tSet CUDA solver (0 = djeZo, 1 = tromp)" << std::endl;
+// 	std::cout << "\t-cd [devices]\tEnable CUDA mining on spec. devices" << std::endl;
+// 	std::cout << "\t-cb [blocks]\tNumber of blocks" << std::endl;
+// 	std::cout << "\t-ct [tpb]\tNumber of threads per block" << std::endl;
+// 	std::cout << "Example: -cd 0 2 -cb 12 16 -ct 64 128" << std::endl;
+// 	std::cout << std::endl;
+// 	//std::cout << "OpenCL settings" << std::endl;
+// 	//std::cout << "\t-oi\t\tOpenCL info" << std::endl;
+// 	//std::cout << "\t-ov [ver]\tSet OpenCL solver (0 = silentarmy, 1 = xmp)" << std::endl;
+// 	//std::cout << "\t-op [platf]\tSet OpenCL platform to selecd platform devices (-od)" << std::endl;
+// 	//std::cout << "\t-od [devices]\tEnable OpenCL mining on spec. devices (specify plafrom number first -op)" << std::endl;
+// 	//std::cout << "\t-ot [threads]\tSet number of threads per device" << std::endl;
+// 	////std::cout << "\t-cb [blocks]\tNumber of blocks" << std::endl;
+// 	////std::cout << "\t-ct [tpb]\tNumber of threads per block" << std::endl;
+// 	//std::cout << "Example: -op 2 -od 0 2" << std::endl; //-cb 12 16 -ct 64 128" << std::endl;
+// 	std::cout << std::endl;
+// }
 
 
 void print_cuda_info()
@@ -307,7 +308,8 @@ int main(int argc, char* argv[])
       boost::program_options::store(boost::program_options::command_line_parser(argc, argv)
 	  			.options(desc)
 				.style(
-					boost::program_options::command_line_style::unix_style |
+					boost::program_options::command_line_style::unix_style ^
+					boost::program_options::command_line_style::allow_guessing |
                 	boost::program_options::command_line_style::allow_long_disguise
 				)
 				.run(),  

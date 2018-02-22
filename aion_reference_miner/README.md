@@ -42,7 +42,7 @@ Working solvers CPU_TROMP, CUDA_TROMP
   - Install Boost 1.65.1
     ```bash
     wget https://dl.bintray.com/boostorg/release/1.65.1/source/boost_1_65_1.tar.bz2
-    tar xf boost_1_61_1.tar.bz2
+    tar xf boost_1_65_1.tar.bz2
     cd boost_1_65_1
     ./bootstrap.sh --with-libraries=system,log,date_time,filesystem,thread,program_options
     sudo ./b2 install
