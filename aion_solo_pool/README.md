@@ -4,6 +4,40 @@
 
 This is an Aion mining pool designed to be used in conjunction with the Aion mining client to be used on the Aion testnet. This mining pool has been specifically designed to be used only for solo mining on the Aion test network; it is not suitable to be used as a public mining pool and should not be deployed in that configuration.
 
+## Quick start guide 
+  
+  - Open 2 terminal windows; using the first window navigate to your Aion kernel.
+  - Open the Aion configuration located in config/config.xml
+  - Disable kernel mining.
+  - Set the miner address to the address which will receive mined block rewards. The address is a 64 character (32 byte) hex string containing the public key and address of an account. 
+
+  Eg.
+  ```
+    <consensus>
+            <mining>false</mining>
+            <miner-address>4cfb91f3053ee1b87ac5a7a1d9de0f5a14b71b642ae1d872f70794970f09a5a2</miner-address>
+            <cpu-mine-threads>8</cpu-mine-threads>
+            <extra-data>AION</extra-data>
+    </consensus>
+  ```
+
+  - Download the latest prepackaged aion_solo_pool on the ([release](https://github.com/aionnetwork/aion_miner/releases)) page.
+  - Place the download into the directory from which you plan to run the pool.
+  - Using the 2nd terminal window, navigate to the download directory and Unpack the solo pool.
+  ```
+  tar xf aion-solo-pool-<VERSION>.tar.gz
+  ```
+  - Run the configure script; this script will download and build all of the pool dependencies and place them into the current directory. This script may take several minutes to complete however it must only be run once. 
+  ```
+  ./configure.sh
+  ```
+  - Run the solo_pool using the quickstart run script. This script will start and stop both the pool and redis server. 
+  ```
+  ./run_quickstart.sh
+  ```
+  - Start the Aion kernel in the first terminal window. 
+  - The pool is now ready to accept incoming client connections and to distribute work to clients. 
+
 
 ## Requirements
 * **Aion kernel** ([download and install](https://github.com/aionnetwork/aion))
@@ -12,7 +46,6 @@ This is an Aion mining pool designed to be used in conjunction with the Aion min
 * **Python v2.7**
 * **make**
 * **node-gyp** v3.6.2+ ([download and install](https://github.com/nodejs/node-gyp))
-* **libsodium** v1.0.16+ ([download and install](https://download.libsodium.org/doc/installation))
 
 ## Setup
 
@@ -70,10 +103,6 @@ node test.js
 Header length: 528
 Solution length: 1408
 true
-8b 57 a7 96 a5 d0 7c b0 
-4c c1 61 4d fc 2a cb 3f 
-73 ed c7 12 d7 f4 33 61 
-9c a3 bb e6 6b b1 5f 49
 ```
 
 **Note:**
@@ -97,7 +126,7 @@ The test may fail if libsodium was installed during the solo pool setup, to reso
 #### 6) Verify Aion configuration
 - Open the Aion config in the root Aion folder /config/config.xml.
 - Navigate to the consensus section.
-- Disable kernel mining (Unless you would like both pool and internal kernal miner).
+- Disable kernel mining.
 - Set the miner address to the address which will receive mined block rewards. The address is a 64 character (32 byte) hex string containing the public key and address of an account. 
 
 Eg.

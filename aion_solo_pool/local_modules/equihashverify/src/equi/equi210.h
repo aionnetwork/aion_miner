@@ -12,7 +12,7 @@
  * algorithm from zcashd.
  */
 
-#include "sodium.h"
+#include "../blake/blake2.h"
 
 #include <cstring>
 #include <exception>
@@ -21,7 +21,7 @@
 #include <set>
 #include <vector>
 
-typedef crypto_generichash_blake2b_state eh_HashState;
+
 typedef uint32_t eh_index;
 typedef uint8_t eh_trunc;
 
@@ -170,16 +170,8 @@ public:
 
     Equihash() { }
 
-    int InitialiseState(eh_HashState& base_state);
-#ifdef ENABLE_MINING
-    bool BasicSolve(const eh_HashState& base_state,
-                    const std::function<bool(std::vector<unsigned char>)> validBlock,
-                    const std::function<bool(EhSolverCancelCheck)> cancelled);
-    bool OptimisedSolve(const eh_HashState& base_state,
-                        const std::function<bool(std::vector<unsigned char>)> validBlock,
-                        const std::function<bool(EhSolverCancelCheck)> cancelled);
-#endif
-    bool IsValidSolution(const eh_HashState& base_state, std::vector<unsigned char> soln);
+    int InitialiseState(blake2b_state *base_state);
+    bool IsValidSolution(blake2b_state *base_state, std::vector<unsigned char> soln);
 };
 
 static Equihash<210,9> Eh210_9;

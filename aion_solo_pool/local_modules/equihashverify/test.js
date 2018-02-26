@@ -10,23 +10,3 @@ console.log("Solution length: " + soln.length);
 
 console.log(ev.verify(header, soln));
 
-
-
-let input = Buffer([0,1,2,3,4,5,6,7,8,9])
-let len = 32
-let res = ev.blake2b(len, input)
-if(res && res.length == len * 2){
-	let arr = [];
-	for (let i = 0, m = res.length; i < m; i += 2) {
-    	arr.push(res.substring(i, i + 2))
-	}
-	for(let i = 0; i < len; i++){
-		if(i % 8 == 0 && i != 0)
-      		console.log(''); 
-    	process.stdout.write(arr[i] + ' ');
-	}
-	console.log('');
-} else {
-	console.log(res);
-	console.log(res.length)
-}
