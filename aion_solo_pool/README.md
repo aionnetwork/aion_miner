@@ -29,22 +29,22 @@ This is an Aion mining pool designed to be used in conjunction with the Aion min
     </consensus>
   ```
 
-  - Download the latest prepackaged aion_solo_pool on the ([release](https://github.com/aionnetwork/aion_miner/releases)) page.
-  - Place the download into the directory from which you plan to run the pool.
-  - Using the 2nd terminal window, navigate to the download directory and Unpack the solo pool.
+- Download the latest prepackaged aion_solo_pool on the ([release](https://github.com/aionnetwork/aion_miner/releases)) page.
+- Place the download into the directory from which you plan to run the pool.
+- Using the 2nd terminal window, navigate to the download directory and Unpack the solo pool.
   ```
   tar xf aion-solo-pool-<VERSION>.tar.gz
   ```
-  - Run the configure script; this script will download and build all of the pool dependencies and place them into the current directory. This script may take several minutes to complete however it must only be run once. 
+- Run the configure script; this script will download and build all of the pool dependencies and place them into the current directory. This script may take several minutes to complete however it must only be run once. 
   ```
   ./configure.sh
   ```
-  - Run the solo_pool using the quickstart run script. This script will start and stop both the pool and redis server. 
+- Run the solo_pool using the quickstart run script. This script will start and stop both the pool and redis server. 
   ```
   ./run_quickstart.sh
   ```
-  - Start the Aion kernel in the first terminal window. 
-  - The pool is now ready to accept incoming client connections and to distribute work to clients. 
+- Start the Aion kernel in the first terminal window. 
+- The pool is now ready to accept incoming client connections and to distribute work to clients. 
 
 
 ## Requirements (building from source)
