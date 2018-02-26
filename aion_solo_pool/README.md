@@ -8,9 +8,12 @@ This is an Aion mining pool designed to be used in conjunction with the Aion min
 
 ### Requirements (quickstart)
 - **Aion kernel** ([download and install](https://github.com/aionnetwork/aion))
-- **Python v2.7** (Included with Ubuntu)
-
+- **Python v2.7**
+  - Included by default with Ubuntu desktop, may need to be installed seperatly in Ubuntu server. 
+  - To install: ```sudo apt-get update && sudo apt-get install build-essential```
 - **make** (Included with Ubuntu)
+  - Included by default with Ubuntu desktop, may need to be installed seperatly in Ubuntu server. 
+  - To install: ```sudo apt-get install python2.7 python-dev```
 
 ### Instructions
 
