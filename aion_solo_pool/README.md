@@ -5,11 +5,19 @@
 This is an Aion mining pool designed to be used in conjunction with the Aion mining client to be used on the Aion testnet. This mining pool has been specifically designed to be used only for solo mining on the Aion test network; it is not suitable to be used as a public mining pool and should not be deployed in that configuration.
 
 ## Quick start guide 
-  
-  - Open 2 terminal windows; using the first window navigate to your Aion kernel.
-  - Open the Aion configuration located in config/config.xml
-  - Disable kernel mining.
-  - Set the miner address to the address which will receive mined block rewards. The address is a 64 character (32 byte) hex string containing the public key and address of an account. 
+
+### Requirements (quickstart)
+- **Aion kernel** ([download and install](https://github.com/aionnetwork/aion))
+- **Python v2.7** (Included with Ubuntu)
+
+- **make** (Included with Ubuntu)
+
+### Instructions
+
+- Open 2 terminal windows; using the first window navigate to your Aion kernel.
+- Open the Aion configuration located in config/config.xml
+- Disable kernel mining.
+- Set the miner address to the address which will receive mined block rewards. The address is a 64 character (32 byte) hex string containing the public key and address of an account. 
 
   Eg.
   ```
@@ -39,7 +47,7 @@ This is an Aion mining pool designed to be used in conjunction with the Aion min
   - The pool is now ready to accept incoming client connections and to distribute work to clients. 
 
 
-## Requirements
+## Requirements (building from source)
 * **Aion kernel** ([download and install](https://github.com/aionnetwork/aion))
 * **Node.js** v8.9.3+ ([download and install](https://nodejs.org/en/download/))
 * **Redis** key-value store v2.6+ ([download and install](http://redis.io/topics/quickstart))
