@@ -22,6 +22,7 @@
 #include "speed.hpp"
 #include "api.hpp"
 
+#include <boost/program_options.hpp>
 #include <boost/log/core/core.hpp>
 #include <boost/log/core.hpp>
 #include <boost/log/trivial.hpp>
@@ -30,6 +31,7 @@
 #include <boost/log/attributes.hpp>
 #include <boost/log/support/date_time.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
+
 
 namespace logging = boost::log;
 namespace sinks = boost::log::sinks;
@@ -53,7 +55,7 @@ namespace keywords = boost::log::keywords;
 
 int use_avx = 0;
 int use_avx2 = 0;
-int use_old_cuda = 0;
+int use_old_cuda = 1;
 int use_old_xmp = 0;
 
 // TODO move somwhere else
@@ -77,47 +79,52 @@ extern "C" void stratum_sigint_handler(int signum)
 		_MinerFactory->ClearAllSolvers();
 		delete _MinerFactory;
 		_MinerFactory = nullptr;
-	}	
+	}
+
+	boost::log::core::get()->remove_all_sinks();
+
+	exit(0);
 }
 
-void print_help()
-{
-	std::cout << "Parameters: " << std::endl;
-	std::cout << "\t-h\t\tPrint this help and quit" << std::endl;
-#ifndef ZCASH_POOL
-	std::cout << "\t-l [location]\tStratum server:port" << std::endl;
-	std::cout << "\t-u [username]\tUsername (bitcoinaddress)" << std::endl;
-#else
-	std::cout << "\t-l [location]\tLocation (eu, usa)" << std::endl;
-	std::cout << "\t-u [username]\tUsername (Zcash wallet address)" << std::endl;
-#endif
-	std::cout << "\t-a [port]\tLocal API port (default: 0 = do not bind)" << std::endl;
-	std::cout << "\t-d [level]\tDebug print level (0 = print all, 5 = fatal only, default: 2)" << std::endl;
-	std::cout << "\t-b [hashes]\tRun in benchmark mode (default: 200 iterations)" << std::endl;
-	std::cout << std::endl;
-	std::cout << "CPU settings" << std::endl;
-	std::cout << "\t-t [num_thrds]\tNumber of CPU threads" << std::endl;
-	std::cout << "\t-e [ext]\tForce CPU ext (0 = SSE2, 1 = AVX, 2 = AVX2)" << std::endl;
-	std::cout << std::endl;
-	std::cout << "NVIDIA CUDA settings" << std::endl;
-	std::cout << "\t-ci\t\tCUDA info" << std::endl;
-	std::cout << "\t-cv [ver]\tSet CUDA solver (0 = djeZo, 1 = tromp)" << std::endl;
-	std::cout << "\t-cd [devices]\tEnable CUDA mining on spec. devices" << std::endl;
-	std::cout << "\t-cb [blocks]\tNumber of blocks" << std::endl;
-	std::cout << "\t-ct [tpb]\tNumber of threads per block" << std::endl;
-	std::cout << "Example: -cd 0 2 -cb 12 16 -ct 64 128" << std::endl;
-	std::cout << std::endl;
-	//std::cout << "OpenCL settings" << std::endl;
-	//std::cout << "\t-oi\t\tOpenCL info" << std::endl;
-	//std::cout << "\t-ov [ver]\tSet OpenCL solver (0 = silentarmy, 1 = xmp)" << std::endl;
-	//std::cout << "\t-op [platf]\tSet OpenCL platform to selecd platform devices (-od)" << std::endl;
-	//std::cout << "\t-od [devices]\tEnable OpenCL mining on spec. devices (specify plafrom number first -op)" << std::endl;
-	//std::cout << "\t-ot [threads]\tSet number of threads per device" << std::endl;
-	////std::cout << "\t-cb [blocks]\tNumber of blocks" << std::endl;
-	////std::cout << "\t-ct [tpb]\tNumber of threads per block" << std::endl;
-	//std::cout << "Example: -op 2 -od 0 2" << std::endl; //-cb 12 16 -ct 64 128" << std::endl;
-	std::cout << std::endl;
-}
+// No longer used; kept for historical reference
+// void print_help()
+// {
+// 	std::cout << "Parameters: " << std::endl;
+// 	std::cout << "\t-h\t\tPrint this help and quit" << std::endl;
+// #ifndef ZCASH_POOL
+// 	std::cout << "\t-l [location]\tStratum server:port" << std::endl;
+// 	std::cout << "\t-u [username]\tUsername (bitcoinaddress)" << std::endl;
+// #else
+// 	std::cout << "\t-l [location]\tLocation (eu, usa)" << std::endl;
+// 	std::cout << "\t-u [username]\tUsername (Zcash wallet address)" << std::endl;
+// #endif
+// 	std::cout << "\t-a [port]\tLocal API port (default: 0 = do not bind)" << std::endl;
+// 	std::cout << "\t-d [level]\tDebug print level (0 = print all, 5 = fatal only, default: 2)" << std::endl;
+// 	std::cout << "\t-b [hashes]\tRun in benchmark mode (default: 200 iterations)" << std::endl;
+// 	std::cout << std::endl;
+// 	std::cout << "CPU settings" << std::endl;
+// 	std::cout << "\t-t [num_thrds]\tNumber of CPU threads" << std::endl;
+// 	std::cout << "\t-e [ext]\tForce CPU ext (0 = SSE2, 1 = AVX, 2 = AVX2)" << std::endl;
+// 	std::cout << std::endl;
+// 	std::cout << "NVIDIA CUDA settings" << std::endl;
+// 	std::cout << "\t-ci\t\tCUDA info" << std::endl;
+// 	std::cout << "\t-cv [ver]\tSet CUDA solver (0 = djeZo, 1 = tromp)" << std::endl;
+// 	std::cout << "\t-cd [devices]\tEnable CUDA mining on spec. devices" << std::endl;
+// 	std::cout << "\t-cb [blocks]\tNumber of blocks" << std::endl;
+// 	std::cout << "\t-ct [tpb]\tNumber of threads per block" << std::endl;
+// 	std::cout << "Example: -cd 0 2 -cb 12 16 -ct 64 128" << std::endl;
+// 	std::cout << std::endl;
+// 	//std::cout << "OpenCL settings" << std::endl;
+// 	//std::cout << "\t-oi\t\tOpenCL info" << std::endl;
+// 	//std::cout << "\t-ov [ver]\tSet OpenCL solver (0 = silentarmy, 1 = xmp)" << std::endl;
+// 	//std::cout << "\t-op [platf]\tSet OpenCL platform to selecd platform devices (-od)" << std::endl;
+// 	//std::cout << "\t-od [devices]\tEnable OpenCL mining on spec. devices (specify plafrom number first -op)" << std::endl;
+// 	//std::cout << "\t-ot [threads]\tSet number of threads per device" << std::endl;
+// 	////std::cout << "\t-cb [blocks]\tNumber of blocks" << std::endl;
+// 	////std::cout << "\t-ct [tpb]\tNumber of threads per block" << std::endl;
+// 	//std::cout << "Example: -op 2 -od 0 2" << std::endl; //-cb 12 16 -ct 64 128" << std::endl;
+// 	std::cout << std::endl;
+// }
 
 
 void print_cuda_info()
@@ -260,122 +267,105 @@ int main(int argc, char* argv[])
 	std::cout << "\t============================= aion reference miner======================" << std::endl;
 	std::cout << std::endl;
 
-	// Show help if there are no args provided
-	if (argc == 1) {
-		print_help();
-		return 0;
-	}
-
-	signal(SIGINT, stratum_sigint_handler);
-
 	std::string location = "localhost:3333";
 	std::string user = "0x0000000000000000000000000000000000000000000000000000000000000000";
 	std::string password = "x";
 	int num_threads = 0;
 	bool benchmark = false;
 	int log_level = 2;
-	int num_hashes = 200;
+	int num_hashes;
 	int api_port = 0;
 	int cuda_device_count = 0;
 	int cuda_bc = 0;
 	int cuda_tbpc = 0;
 	int force_cpu_ext = -1;
 
-	for (int i = 1; i < argc; ++i)
-	{
-		if (argv[i][0] != '-') continue;
+	signal(SIGINT, stratum_sigint_handler);
 
-		switch (argv[i][1])
-		{
-		case 'c':
-		{
-			switch (argv[i][2])
-			{
-			case 'i':
-				print_cuda_info();
-				return 0;
-			case 'v':
-				use_old_cuda = atoi(argv[++i]);
-				break;
-			case 'd':
-				while (cuda_device_count < MAX_INSTANCES && i + 1 < argc)
-				{
-					try
-					{
-						cuda_enabled[cuda_device_count] = std::stol(argv[++i]);
-						++cuda_device_count;
-					}
-					catch (...)
-					{
-						--i;
-						break;
-					}
-				}
-				break;
-			case 'b':
-				while (cuda_bc < MAX_INSTANCES && i + 1 < argc)
-				{
-					try
-					{
-						cuda_blocks[cuda_bc] = std::stol(argv[++i]);
-						++cuda_bc;
-					}
-					catch (...)
-					{
-						--i;
-						break;
-					}
-				}
-				break;
-			case 't':
-				while (cuda_tbpc < MAX_INSTANCES && i + 1 < argc)
-				{
-					try
-					{
-						cuda_tpb[cuda_tbpc] = std::stol(argv[++i]);
-						++cuda_tbpc;
-					}
-					catch (...)
-					{
-						--i;
-						break;
-					}
-				}
-				break;
-			}
-			break;
-		}
-		case 'l':
-			location = argv[++i];
-			break;
-		case 'u':
-			user = argv[++i];
-			break;
-		case 'p':
-			password = argv[++i];
-			break;
-		case 't':
-			num_threads = atoi(argv[++i]);
-			break;
-		case 'h':
-			print_help();
-			return 0;
-		case 'b':
+	//namespace boost::program_options = boost::program_options; 
+    boost::program_options::options_description desc("Options"); 
+    desc.add_options()
+	  //General settings 
+      ("help,h", "Print help messages") 
+      ("location,l", boost::program_options::value<std::string>(&location), "Stratum server:port")
+	  ("username,u", boost::program_options::value<std::string>(&user), "Username (Aion Addess)")
+	  ("apiPort,a", boost::program_options::value<int>(&api_port), "Local port (default 0 = do not bind)")
+	  ("level,d", boost::program_options::value<int>(&log_level), "Debug print level (0 = print all, 5 = fatal only, default: 2)")
+	  ("benchmark,b", boost::program_options::value<int>()->implicit_value(200), "Run in benchmark mode (default: 200 iterations)")
+	  //CPU settings
+	  ("threads,t",  boost::program_options::value<int>(&num_threads), "Number of CPU threads")
+	  ("ext,e", boost::program_options::value<int>(&force_cpu_ext), "Force CPU ext (0 = SSE2, 1 = AVX, 2 = AVX2)")
+	  //NVIDIA settings
+      ("ci", "Show CUDA info")
+	  ("cv", boost::program_options::value<int>(&use_old_cuda), "CUDA solver (0 = djeZo, 1 = tromp, default=1)")
+	  ("cd", boost::program_options::value<std::vector<int>>()->multitoken()->composing(), "Enable mining on spec. devices")
+	  ("cb", boost::program_options::value<std::vector<int>>()->multitoken()->composing(), "Number of blocks (per device)")
+	  ("ct", boost::program_options::value<std::vector<int>>()->multitoken()->composing(), "Number of threads per block (per device)");
+
+ 	boost::program_options::variables_map vm; 
+    try 
+    { 
+      boost::program_options::store(boost::program_options::command_line_parser(argc, argv)
+	  			.options(desc)
+				.style(
+					boost::program_options::command_line_style::unix_style ^
+					boost::program_options::command_line_style::allow_guessing |
+                	boost::program_options::command_line_style::allow_long_disguise
+				)
+				.run(),  
+                vm); // can throw 
+ 
+		/** --help option
+		 */
+      	boost::program_options::notify(vm); // throws on error, so do after help in case 
+                        // there are any problems 
+		if ( vm.count("help") || argc == 1 ) { 
+			std::cout << "Aion Reference Miner" << std::endl 
+					<< desc << std::endl
+					<< "Example: -cd 0 2 -cb 12 16 -ct 64 128" << std::endl; 
+			return 1; 
+		} 
+
+		if(vm.count("benchmark")){
 			benchmark = true;
-			if (argv[i + 1] && argv[i + 1][0] != '-')
-				num_hashes = atoi(argv[++i]);
-			break;
-		case 'd':
-			log_level = atoi(argv[++i]);
-			break;
-		case 'a':
-			api_port = atoi(argv[++i]);
-			break;
-		case 'e':
-			force_cpu_ext = atoi(argv[++i]);
-			break;
+			num_hashes = vm["benchmark"].as<int>();
 		}
-	}
+
+		if(vm.count("ci")){
+			print_cuda_info();
+			return 1;
+		}
+
+		if(vm.count("cd")){
+			std::vector<int> devs = vm["cd"].as<std::vector<int>>();
+			for(int i = 0; i < devs.size() && i < MAX_INSTANCES; i++){
+				cuda_enabled[cuda_device_count] = devs[i];
+				++cuda_device_count;
+			}
+		}
+
+		if(vm.count("cb")){
+			std::vector<int> devs = vm["cb"].as<std::vector<int>>();
+			for(int i = 0; i < devs.size() && i < MAX_INSTANCES; i++){
+				cuda_blocks[cuda_bc] = devs[i];
+				++cuda_bc;
+			}
+		}
+
+		if(vm.count("ct")){
+			std::vector<int> devs = vm["ct"].as<std::vector<int>>();
+			for(int i = 0; i < devs.size() && i < MAX_INSTANCES; i++){
+				cuda_tpb[cuda_tbpc] = devs[i];
+				++cuda_tbpc;
+			}
+		}
+	} 
+    catch(boost::program_options::error& e) 
+    { 
+      std::cerr << "ERROR: " << e.what() << std::endl << std::endl; 
+      std::cerr << desc << std::endl; 
+      return 0; 
+    } 
 
 	if (force_cpu_ext >= 0)
 	{
@@ -393,7 +383,7 @@ int main(int argc, char* argv[])
 	else
 		detect_AVX_and_AVX2();
 
-	// init_logging init START
+	//init_logging init START
     std::cout << "Setting log level to " << log_level << std::endl;
     boost::log::add_console_log(
         std::clog,
@@ -408,7 +398,7 @@ int main(int argc, char* argv[])
     );
     boost::log::core::get()->add_global_attribute("TimeStamp", boost::log::attributes::local_clock());
     boost::log::core::get()->add_global_attribute("ThreadID", boost::log::attributes::current_thread_id());
-	// init_logging init END
+	//init_logging init END
 
 	BOOST_LOG_TRIVIAL(info) << "Using SSE2: YES";
 	BOOST_LOG_TRIVIAL(info) << "Using AVX: " << (use_avx ? "YES" : "NO");

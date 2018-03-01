@@ -30,7 +30,14 @@
             "dependencies": [
             ],
             "sources": [
-		"src/equi/blake2b.c",
+                "src/blake/blake2-config.h",
+                "src/blake/blake2-impl.h",
+                "src/blake/blake2-round.h",
+                "src/blake/blake2.h",
+                "src/blake/blake2b-load-sse2.h",
+                "src/blake/blake2b-load-sse41.h",
+                "src/blake/blake2b-round.h",
+                "src/blake/blake2b.cpp",
                 "src/equi/equi210.cpp",
                 "src/equi/endian.c",
             ],
@@ -47,7 +54,6 @@
             ],
             "link_settings": {
                 "libraries": [
-                    "-lsodium"
                 ],
             },
         }
