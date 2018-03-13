@@ -1,6 +1,6 @@
 {
     "name": "aion-mining-pool",
-    "version": "0.0.1",
+    "version": "0.1.9",
     "description": "pool",
     "keywords": [
         "stratum",
