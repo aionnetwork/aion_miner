@@ -480,12 +480,13 @@ var pool = module.exports = function pool(options, authorizeFn){
             finishedCallback();
 
         }).on('broadcastTimeout', function(){
-            emitLog('No new blocks for ' + options.jobRebroadcastTimeout + ' seconds - updating transactions & rebroadcasting work');
+            // emitLog('No new blocks for ' + options.jobRebroadcastTimeout + ' seconds - updating transactions & rebroadcasting work');
+            emitLog('No new blocks for ' + options.jobRebroadcastTimeout + ' seconds');
 
-            GetBlockTemplate(function(error, rpcData, processedBlock){
-                if (error || processedBlock) return;
-                _this.jobManager.updateCurrentJob(rpcData);
-            });
+            // GetBlockTemplate(function(error, rpcData, processedBlock){
+            //     if (error || processedBlock) return;
+            //     _this.jobManager.updateCurrentJob(rpcData);
+            // });
 
         }).on('client.connected', function(client){
             if (typeof(_this.varDiff[client.socket.localPort]) !== 'undefined') {
