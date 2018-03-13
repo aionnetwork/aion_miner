@@ -337,7 +337,7 @@ void static AionMinerThread(AionMiner* miner, int size, int pos,
 							EquihashSolution solution {actualHeader.nNonce, actualHeader.nSolution, actualTime, actualNonce1size};
 
 							// submit with udpated timestamp.
-							miner->submitSolution(solution, actualJobId,actualHeader.timeStamp );
+							miner->submitSolution(solution, actualJobId, actualHeader.timeStamp );
 						};
 
 				std::function < bool() > cancelFun = [&cancelSolver]() {

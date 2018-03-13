@@ -227,7 +227,7 @@ var pool = module.exports = function pool(options, authorizeFn){
     /*
     Coin daemons either use submitblock or getblocktemplate for submitting new blocks
      */
-    function SubmitBlock(blockHex, nonce, solution, headerHash, callback){
+    function SubmitBlock(blockHex, nTime, nonce, solution, headerHash, callback){
 
 
         //TODO: Invstigate how to switch between these two, use submit for now
@@ -243,7 +243,7 @@ var pool = module.exports = function pool(options, authorizeFn){
 
         var rpcCommand, rpcArgs;
         rpcCommand = 'submitblock';
-        rpcArgs =[nonce, solution, headerHash];
+        rpcArgs =[nonce, solution, headerHash, nTime];
         
         _this.daemon.cmd(rpcCommand,
             rpcArgs,
@@ -313,7 +313,7 @@ var pool = module.exports = function pool(options, authorizeFn){
                 job[13] = true;
                 _this.stratumServer.broadcastMiningJobs(job);
             }
-        }).on('share', function(shareData, blockHex, nonce, solution, headerHash){
+        }).on('share', function(shareData, blockHex, nTime, nonce, solution, headerHash){
             var isValidShare = !shareData.error;
             var isValidBlock = !!blockHex && !!nonce && !!solution;
             
@@ -332,7 +332,7 @@ var pool = module.exports = function pool(options, authorizeFn){
             if (!isValidBlock)
                 emitShare();
             else{
-                SubmitBlock(blockHex, nonce, solution, headerHash, function(){
+                SubmitBlock(blockHex, nTime, nonce, solution, headerHash, function(){
 
                     //RK - Assume block has been accepted
                     //Get the new block template after 0.5 sec

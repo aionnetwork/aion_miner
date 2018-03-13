@@ -4,8 +4,8 @@ cmake_minimum_required(VERSION 3.5)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11") #  -Wall
 
 ## Enable solvers here
-option(USE_CPU_TROMP "USE CPU_TROMP" OFF)
-option(USE_CUDA_TROMP "USE CUDA_TROMP" ON)
+option(USE_CPU_TROMP "USE CPU_TROMP" ON)
+option(USE_CUDA_TROMP "USE CUDA_TROMP" OFF)
 
 ## Add solvers here
 if (USE_CPU_TROMP)

@@ -8,6 +8,8 @@
 #include "streams.h"
 //#include "util.h"
 #include <byteswap.h>
+#include <iostream>
+#include <iomanip>
 
 #include "utilstrencodings.h"
 
@@ -407,15 +409,23 @@ bool StratumClient<Miner, Job, Solution>::submit(const Solution* solution,
 	BOOST_LOG_CUSTOM(trace) << "vector size: : " << solution->solution.size();
 	BOOST_LOG_CUSTOM(trace) << "timestamp: : " << timestamp;
 
-	char c_timestamp[16];
+	//char c_timestamp[16];
 
 	//  timestamp to BE.
-	uint64_t bets = __bswap_64(timestamp);
+	uint64_t bets = bswap_64(timestamp);
 
-	// transform to 16 bytes hex.
-	sprintf(c_timestamp, "%016x", bets);
+	BOOST_LOG_CUSTOM(trace) << "timestamp_BE: : " << bets;
 
-//	printf("timestamp: %s \n", c_timestamp);
+	// // transform to 16 bytes hex.
+	// sprintf(c_timestamp, "%lx", bets);
+
+	// //printf("timestamp: %s \n", c_timestamp);
+	// BOOST_LOG_CUSTOM(trace) << "c_timestamp: : " << c_timestamp;
+
+	std::stringstream c_timestamp;
+	c_timestamp << std::setfill('0') << std::setw(sizeof(uint64_t) * 2) << std::hex << bets;
+
+	BOOST_LOG_CUSTOM(trace) << "timestamp bets : : " << c_timestamp.str();
 
 	std::stringstream stream;
 	stream << "{\"id\":" << id
@@ -426,7 +436,7 @@ bool StratumClient<Miner, Job, Solution>::submit(const Solution* solution,
 
 	//stream << "\",\"" << solution->time;
 	// replace nTime in stratum with updated timestamp in hex( 16 bytes ) format.
-	stream << "\",\"" << c_timestamp;
+	stream << "\",\"" << c_timestamp.str();
 
 	stream << "\",\""
 			<< strHex.substr(solution->nonce1size, 64 - solution->nonce1size);
