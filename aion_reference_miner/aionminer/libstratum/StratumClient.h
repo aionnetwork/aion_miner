@@ -113,7 +113,7 @@ public:
     bool isRunning() { return m_running; }
     bool isConnected() { return m_connected && m_authorized; }
     bool current() { return p_current; }
-    bool submit(const Solution* solution, const std::string& jobid);
+    bool submit(const Solution* solution, const std::string& jobid, uint64_t timestamp);
     void reconnect();
     void disconnect();
 
