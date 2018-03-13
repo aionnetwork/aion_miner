@@ -1,6 +1,6 @@
 {
     "name": "aion-mining-pool",
-    "version": "0.0.1",
+    "version": "0.1.9",
     "description": "pool",
     "keywords": [
         "stratum",
@@ -17,24 +17,25 @@
         "block-notify": "./scripts/blockNotify.js"
     },
     "dependencies": {
-        "blake2": "file:local_modules/node-blake2",
-        "stratum-pool": "file:local_modules/stratum-pool",
-        "equihashverify": "file:local_modules/equihashverify",
         "async": "*",
         "bignum": "*",
+        "bindings": "*",
+        "blake2": "file:local_modules/node-blake2",
         "body-parser": "*",
         "colors": "*",
         "compression": "*",
         "dateformat": "*",
         "dot": "*",
+        "equihashverify": "file:local_modules/equihashverify",
         "express": "*",
         "extend": "*",
+        "moment": "^2.20.1",
         "mysql": "*",
         "node-watch": "*",
         "nonce": "*",
         "redis": "*",
         "request": "*",
-        "bindings": "*"
+        "stratum-pool": "file:local_modules/stratum-pool"
     },
     "devDependencies": {
         "gulp": "^3.9.1",

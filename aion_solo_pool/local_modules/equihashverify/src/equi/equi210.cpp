@@ -13,40 +13,6 @@
 // NDSS ’16, 21-24 February 2016, San Diego, CA, USA
 // https://www.internetsociety.org/sites/default/files/blogs-media/equihash-asymmetric-proof-of-work-based-generalized-birthday-problem.pdf
 
-/*******************************************************************************
- * Copyright (c) 2017-2018 Aion foundation.
- *
- *     This file is part of the aion network project.
- *
- *     The aion network project is free software: you can redistribute it
- *     and/or modify it under the terms of the GNU General Public License
- *     as published by the Free Software Foundation, either version 3 of
- *     the License, or any later version.
- *
- *     The aion network project is distributed in the hope that it will
- *     be useful, but WITHOUT ANY WARRANTY; without even the implied
- *     warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *     See the GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with the aion network project source files.
- *     If not, see <https://www.gnu.org/licenses/>.
- *
- *     The aion network project leverages useful source code from other
- *     open source projects. We greatly appreciate the effort that was
- *     invested in these projects and we thank the individual contributors
- *     for their work. For provenance information and contributors
- *     please see <https://github.com/aionnetwork/aion/wiki/Contributors>.
- *
- * Contributors to the aion source files in decreasing order of code volume:
- *     Aion foundation.
- *     <ether.camp> team through the ethereumJ library.
- *     Ether.Camp Inc. (US) team through Ethereum Harmony.
- *     John Tromp through the Equihash solver.
- *     Samuel Neves through the BLAKE2 implementation.
- *     Zcash project team.
- *     Bitcoinj team.
- ******************************************************************************/
 
 #include "endian.h"
 #include "equi210.h"
@@ -55,62 +21,65 @@
 #include <iostream>
 #include <stdexcept>
 
-#include <boost/optional.hpp>
 
 bool verifyEH(const char *hdr, const char *soln, int n, int k){
 
     size_t cBitLen { n /(k+1)};
-    crypto_generichash_blake2b_state state;
-    EhInitialiseState(n, k, state);
+    blake2b_state state;
+    EhInitialiseState(n, k, &state);
 
     //Update header and nonce in same call
-    crypto_generichash_blake2b_update(&state, (unsigned char*)&hdr[0], 528);
+    blake2b_update(&state, (unsigned char*)&hdr[0], 528);
 
     std::vector<unsigned char> minimal(soln, soln + 1408);
 
     bool isValid;
-    EhIsValidSolution(n,k,state, minimal, isValid);    
+    EhIsValidSolution(n,k,&state, minimal, isValid);    
     return isValid;
 }
 
 
 template<unsigned int N, unsigned int K>
-int Equihash<N,K>::InitialiseState(eh_HashState& base_state)
+int Equihash<N,K>::InitialiseState(blake2b_state *base_state)
 {
     uint32_t le_N = htole32(N);
     uint32_t le_K = htole32(K);
-    unsigned char personalization[crypto_generichash_blake2b_PERSONALBYTES] = {};
+    unsigned char personalization[16] = {};
     memcpy(personalization, "AION0PoW", 8);
     memcpy(personalization+8,  &le_N, 4);
     memcpy(personalization+12, &le_K, 4);
-    return crypto_generichash_blake2b_init_salt_personal(&base_state,
-                                                         NULL, 0, // No key.
-                                                         HashOutput,
-                                                         NULL,    // No salt.
-                                                         personalization);
+
+    blake2b_param P[1];
+    P->digest_length = HashOutput;
+    P->key_length    = 0;
+    P->fanout        = 1;
+    P->depth         = 1;
+    P->leaf_length   = 0;
+    P->node_offset   = 0;
+    P->node_depth    = 0;
+    P->inner_length  = 0;
+    memset(P->reserved, 0, sizeof(P->reserved));
+    memset(P->salt,     0, sizeof(P->salt));
+    memcpy(P->personal, (const uint8_t *)personalization, 16);
+    blake2b_init_param(base_state, P);
 }
 
-void GenerateHash(const eh_HashState& base_state, eh_index g,
+void GenerateHash(blake2b_state *base_state, eh_index g,
                   unsigned char* hash, size_t hLen)
 {
-    eh_HashState state;
-    state = base_state;
+    blake2b_state state = *base_state;
     eh_index lei = htole32(g);
-    crypto_generichash_blake2b_update(&state, (const unsigned char*) &lei,
+    blake2b_update(&state, (const unsigned char*) &lei,
                                       sizeof(eh_index));
-    crypto_generichash_blake2b_final(&state, hash, hLen);
-
+    blake2b_final(&state, hash, hLen);
 }
 
 void ExpandArray(const unsigned char* in, size_t in_len,
                  unsigned char* out, size_t out_len,
                  size_t bit_len, size_t byte_pad)
 {
-    assert(bit_len >= 8);
-    assert(8*sizeof(uint32_t) >= 7+bit_len);
 
     size_t out_width { (bit_len+7)/8 + byte_pad };
-    //assert(out_len == 8*out_width*in_len/bit_len);
 
     uint32_t bit_len_mask { ((uint32_t)1 << bit_len) - 1 };
 
@@ -149,11 +118,7 @@ void CompressArray(const unsigned char* in, size_t in_len,
                    unsigned char* out, size_t out_len,
                    size_t bit_len, size_t byte_pad)
 {
-    assert(bit_len >= 8);
-    assert(8*sizeof(uint32_t) >= 7+bit_len);
-
     size_t in_width { (bit_len+7)/8 + byte_pad };
-    assert(out_len == bit_len*in_len/(8*in_width));
 
     uint32_t bit_len_mask { ((uint32_t)1 << bit_len) - 1 };
 
@@ -188,7 +153,6 @@ void CompressArray(const unsigned char* in, size_t in_len,
 // comparison
 void EhIndexToArray(const eh_index i, unsigned char* array)
 {
-    BOOST_STATIC_ASSERT(sizeof(eh_index) == 4);
     eh_index bei = htobe32(i);
     memcpy(array, &bei, sizeof(eh_index));
 }
@@ -197,7 +161,6 @@ void EhIndexToArray(const eh_index i, unsigned char* array)
 // comparison
 eh_index ArrayToEhIndex(const unsigned char* array)
 {
-    BOOST_STATIC_ASSERT(sizeof(eh_index) == 4);
     eh_index bei;
     memcpy(&bei, array, sizeof(eh_index));
     return be32toh(bei);
@@ -206,7 +169,6 @@ eh_index ArrayToEhIndex(const unsigned char* array)
 eh_trunc TruncateIndex(const eh_index i, const unsigned int ilen)
 {
     // Truncate to 8 bits
-    BOOST_STATIC_ASSERT(sizeof(eh_trunc) == 1);
     return (i >> (ilen - 8)) & 0xff;
 }
 
@@ -219,7 +181,6 @@ eh_index UntruncateIndex(const eh_trunc t, const eh_index r, const unsigned int 
 std::vector<eh_index> GetIndicesFromMinimal(std::vector<unsigned char> minimal,
                                             size_t cBitLen)
 {
-    assert(((cBitLen+1)+7)/8 <= sizeof(eh_index));
     size_t lenIndices { 8*sizeof(eh_index)*minimal.size()/(cBitLen+1) };
     size_t bytePad { sizeof(eh_index) - ((cBitLen+1)+7)/8 };
     std::vector<unsigned char> array(lenIndices);
@@ -235,7 +196,6 @@ std::vector<eh_index> GetIndicesFromMinimal(std::vector<unsigned char> minimal,
 std::vector<unsigned char> GetMinimalFromIndices(std::vector<eh_index> indices,
                                                  size_t cBitLen)
 {
-    assert(((cBitLen+1)+7)/8 <= sizeof(eh_index));
     size_t lenIndices { indices.size()*sizeof(eh_index) };
     size_t minLen { (cBitLen+1)*lenIndices/(8*sizeof(eh_index)) };
     size_t bytePad { sizeof(eh_index) - ((cBitLen+1)+7)/8 };
@@ -253,7 +213,6 @@ template<size_t WIDTH>
 StepRow<WIDTH>::StepRow(const unsigned char* hashIn, size_t hInLen,
                         size_t hLen, size_t cBitLen)
 {
-    assert(hLen <= WIDTH);
     memset(hash,0, sizeof(hash)/sizeof(hash[0]));
     ExpandArray(hashIn, hInLen, hash, hLen, cBitLen);
 }
@@ -262,7 +221,6 @@ template<size_t WIDTH> template<size_t W>
 StepRow<WIDTH>::StepRow(const StepRow<W>& a)
 {
     memset(hash,0, sizeof(hash)/sizeof(hash[0]));
-    BOOST_STATIC_ASSERT(W <= WIDTH);
     std::copy(a.hash, a.hash+W, hash);
 }
 
@@ -278,8 +236,6 @@ template<size_t WIDTH> template<size_t W>
 FullStepRow<WIDTH>::FullStepRow(const FullStepRow<W>& a, const FullStepRow<W>& b, size_t len, size_t lenIndices, int trim) :
         StepRow<WIDTH> {a}
 {
-    assert(len+lenIndices <= W);
-    assert(len-trim+(2*lenIndices) <= WIDTH);
     for (int i = trim; i < len; i++)
         hash[i-trim] = a.hash[i] ^ b.hash[i];
     if (a.IndicesBefore(b, len, lenIndices)) {
@@ -314,7 +270,6 @@ template<size_t WIDTH>
 std::vector<unsigned char> FullStepRow<WIDTH>::GetIndices(size_t len, size_t lenIndices,
                                                           size_t cBitLen) const
 {
-    assert(((cBitLen+1)+7)/8 <= sizeof(eh_index));
     size_t minLen { (cBitLen+1)*lenIndices/(8*sizeof(eh_index)) };
     size_t bytePad { sizeof(eh_index) - ((cBitLen+1)+7)/8 };
     std::vector<unsigned char> ret(minLen);
@@ -348,8 +303,6 @@ template<size_t WIDTH> template<size_t W>
 TruncatedStepRow<WIDTH>::TruncatedStepRow(const TruncatedStepRow<W>& a, const TruncatedStepRow<W>& b, size_t len, size_t lenIndices, int trim) :
         StepRow<WIDTH> {a}
 {
-    assert(len+lenIndices <= W);
-    assert(len-trim+(2*lenIndices) <= WIDTH);
     for (int i = trim; i < len; i++)
         hash[i-trim] = a.hash[i] ^ b.hash[i];
     if (a.IndicesBefore(b, len, lenIndices)) {
@@ -377,7 +330,7 @@ std::shared_ptr<eh_trunc> TruncatedStepRow<WIDTH>::GetTruncatedIndices(size_t le
 }
 
 template<unsigned int N, unsigned int K>
-bool Equihash<N,K>::IsValidSolution(const eh_HashState& base_state, std::vector<unsigned char> soln)
+bool Equihash<N,K>::IsValidSolution(blake2b_state *base_state, std::vector<unsigned char> soln)
 {
     if (soln.size() != SolutionWidth) {
         return false;
@@ -386,6 +339,7 @@ bool Equihash<N,K>::IsValidSolution(const eh_HashState& base_state, std::vector<
     std::vector<FullStepRow<FinalFullWidth>> X;
     X.reserve(1 << K);
     unsigned char tmpHash[HashOutput] = {};
+
     for (eh_index i : GetIndicesFromMinimal(soln, CollisionBitLength)) {
         GenerateHash(base_state, i/IndicesPerHashOutput, tmpHash, HashOutput);
         X.emplace_back(tmpHash+((i % IndicesPerHashOutput) * HashLen),
@@ -413,10 +367,9 @@ bool Equihash<N,K>::IsValidSolution(const eh_HashState& base_state, std::vector<
         lenIndices *= 2;
     }
 
-    assert(X.size() == 1);
     return X[0].IsZero(hashLen);
 }
 
 // Explicit instantiations for Equihash<210,9>
-template int Equihash<210,9>::InitialiseState(eh_HashState& base_state);
-template bool Equihash<210,9>::IsValidSolution(const eh_HashState& base_state, std::vector<unsigned char> soln);
+template int Equihash<210,9>::InitialiseState(blake2b_state *base_state);
+template bool Equihash<210,9>::IsValidSolution(blake2b_state *base_state, std::vector<unsigned char> soln);

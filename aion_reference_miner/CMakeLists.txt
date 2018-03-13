@@ -20,11 +20,11 @@ endif()
 ########
 # LINUX
 if(CMAKE_COMPILER_IS_GNUCXX)
-    #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m64 -msse2")
-    #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m64 -msse2")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m64 -msse2")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m64 -msse2")
     
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m64 -mavx")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m64 -mavx")
+    #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m64 -mavx")
+    #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m64 -mavx")
     
     # optimizations
     add_definitions(-O3)
@@ -40,7 +40,7 @@ set(Boost_USE_STATIC_LIBS ON)
 set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
 #set(BUILD_SHARED_LIBRARIES OFF)
 #set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static")
-find_package(Boost REQUIRED COMPONENTS system log_setup log date_time filesystem thread)
+find_package(Boost REQUIRED COMPONENTS system log_setup log date_time filesystem thread program_options)
 
 if (Boost_FOUND)
   # From the offical documentation:

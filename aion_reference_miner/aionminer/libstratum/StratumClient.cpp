@@ -195,23 +195,27 @@ void StratumClient<Miner, Job, Solution>::reconnect() {
 	timer.wait();
 }
 
-template<typename Miner, typename Job, typename Solution>
-void StratumClient<Miner, Job, Solution>::disconnect() {
-	if (!m_connected)
-		return;
-	BOOST_LOG_CUSTOM(info) << "Disconnecting";
-	m_connected = false;
-	m_running = false;
-	if (p_miner->isMining()) {
+template <typename Miner, typename Job, typename Solution>
+void StratumClient<Miner, Job, Solution>::disconnect()
+{
+    if (!m_connected) return;
+	
+    BOOST_LOG_CUSTOM(info) << "Stopping work cycle";
+    if (m_work) {
+        m_running = false;
+        m_work->join();
+        m_work.reset();
+    }
+    
+    BOOST_LOG_CUSTOM(info) << "Disconnecting";
+    m_connected = false;
+    m_running = false;
+    if (p_miner->isMining()) {
 		BOOST_LOG_CUSTOM(info) << "Stopping miner";
-		p_miner->stop();
-	}
-	m_socket.close();
-	//m_io_service.stop();
-	if (m_work) {
-		m_work->join();
-		m_work.reset();
-	}
+        p_miner->stop();
+    }
+    m_socket.close();
+    
 }
 
 template<typename Miner, typename Job, typename Solution>

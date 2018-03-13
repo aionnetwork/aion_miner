@@ -4,3 +4,4 @@ redis
 node
 dump.rdb
 local_modules/equihashverify/build/*
+package-lock.json

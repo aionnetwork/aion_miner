@@ -18,10 +18,9 @@ gulp.task('release', function () {
         'config.json',
         'init.js',
         'package.json',
-        'redis.sh',
         'run.sh',
-        'node/**',
-        'redis/**'
+	'run_quickstart.sh',
+	'configure.sh'
     ], {base: 'pool'})
     .pipe(tar('aion-solo-pool-' + version + '-' + moment().format('YYYY-MM-DD') + '.tar'))
     .pipe(gzip())
