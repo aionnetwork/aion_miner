@@ -212,8 +212,8 @@ void start_mining(int api_port, const std::string& host, const std::string& port
 		io_service, &miner, host, port, user, password, 0, 0
 	};
 
-	miner.onSolutionFound([&](const EquihashSolution& solution, const std::string& jobid) {
-		return sc.submit(&solution, jobid);
+	miner.onSolutionFound([&](const EquihashSolution& solution, const std::string& jobid, uint64_t timestamp) {
+		return sc.submit(&solution, jobid,timestamp);
 	});
 
 	handler = &sc;
