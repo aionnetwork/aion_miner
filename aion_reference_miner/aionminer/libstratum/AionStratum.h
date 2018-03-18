@@ -86,7 +86,7 @@ class AionMiner
     size_t nonce1Size;
     arith_uint256 nonce2Space;
     arith_uint256 nonce2Inc;
-    std::function<bool(const EquihashSolution&, const std::string&)> solutionFoundCallback;
+    std::function<bool(const EquihashSolution&, const std::string&, uint64_t)> solutionFoundCallback;
 	bool m_isActive;
 
 	std::vector<ISolver *> solvers;
@@ -105,8 +105,8 @@ public:
 	void setServerNonce(const std::string& n1str);
     AionJob* parseJob(const Array& params);
     void setJob(AionJob* job);
-	void onSolutionFound(const std::function<bool(const EquihashSolution&, const std::string&)> callback);
-	void submitSolution(const EquihashSolution& solution, const std::string& jobid);
+	void onSolutionFound(const std::function<bool(const EquihashSolution&, const std::string&, uint64_t timestamp)> callback);
+	void submitSolution(const EquihashSolution& solution, const std::string& jobid, uint64_t timestamp);
     void acceptedSolution(bool stale);
     void rejectedSolution(bool stale);
     void failedSolution();

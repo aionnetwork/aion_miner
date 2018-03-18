@@ -167,6 +167,8 @@ var StratumClient = function(options){
             considerBan(false);
             return;
         }
+        
+        //console.log(message.params)
 
         _this.emit('submit',
             {

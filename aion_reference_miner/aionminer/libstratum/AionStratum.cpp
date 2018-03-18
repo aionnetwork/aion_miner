@@ -8,6 +8,7 @@
 
 #include "utilstrencodings.h"
 #include "streams.h"
+#include <byteswap.h>
 
 #include <iostream>
 #include <atomic>
@@ -172,34 +173,49 @@ void static AionMinerThread(AionMiner* miner, int size, int pos,
 				actualTarget = target;
 			}
 
-			// I = the block header minus nonce and solution.
-			CDataStream ss(SER_NETWORK, PROTOCOL_VERSION);
-			{
-				//std::lock_guard<std::mutex> lock{ *m_zmt.get() };
-				AEquihashInput I { actualHeader };
-				ss << I;
-
-				// printf("Equihash Input Fields: \n");
-				// BOOST_LOG_CUSTOM(debug, pos) << "Parent Hash:  " << actualHeader.parentHash.ToString();
-				// BOOST_LOG_CUSTOM(debug, pos) << "CoinBase:  " << actualHeader.coinBase.ToString();
-				// BOOST_LOG_CUSTOM(debug, pos) << "State root:  " << actualHeader.stateRoot.ToString();
-				// BOOST_LOG_CUSTOM(debug, pos) << "txTrie:  " << actualHeader.txTrie.ToString();
-				// BOOST_LOG_CUSTOM(debug, pos) << "ReceiptTreeRoot :  " << actualHeader.receiptTreeRoot.ToString();
-				// BOOST_LOG_CUSTOM(debug, pos) << "LogsBloom:  " << actualHeader.logsBloom.ToString();
-				// BOOST_LOG_CUSTOM(debug, pos) << "Difficulty:  " << actualHeader.difficulty.ToString();
-				// BOOST_LOG_CUSTOM(debug, pos) << "Timestamp:  " << actualHeader.timeStamp;
-				// BOOST_LOG_CUSTOM(debug, pos) << "NUmber:  " << actualHeader.number;
-				// BOOST_LOG_CUSTOM(debug, pos) << "extraData:  " << actualHeader.extraData.ToString();
-				// BOOST_LOG_CUSTOM(debug, pos) << "energyConsumed:  " << actualHeader.energyConsumed;
-				// BOOST_LOG_CUSTOM(debug, pos) << "energyLimit:  " << actualHeader.energyLimit;
-
-			}
-
-			char *tequihash_header = (char *) &ss[0];
-			unsigned int tequihash_header_len = ss.size();
-
 			// Start working
 			while (true) {
+
+				// every iteration need a new timestamp on header.
+				CDataStream ss(SER_NETWORK, PROTOCOL_VERSION);
+				{
+
+					//  get timestamp in seonds.
+					uint64_t lets =
+							std::chrono::duration_cast
+									< std::chrono::milliseconds
+									> (std::chrono::system_clock::now().time_since_epoch()).count();
+					lets /= 1000;
+
+					// convert to BE
+					uint64_t bets = __bswap_64(lets);
+
+					// update the header.
+					actualHeader.timeStamp = bets;
+
+					// steam out for hash iteration.
+					AEquihashInput I { actualHeader };
+					ss << I;
+
+					// printf("Equihash Input Fields: \n");
+					// BOOST_LOG_CUSTOM(debug, pos) << "Parent Hash:  " << actualHeader.parentHash.ToString();
+					// BOOST_LOG_CUSTOM(debug, pos) << "CoinBase:  " << actualHeader.coinBase.ToString();
+					// BOOST_LOG_CUSTOM(debug, pos) << "State root:  " << actualHeader.stateRoot.ToString();
+					// BOOST_LOG_CUSTOM(debug, pos) << "txTrie:  " << actualHeader.txTrie.ToString();
+					// BOOST_LOG_CUSTOM(debug, pos) << "ReceiptTreeRoot :  " << actualHeader.receiptTreeRoot.ToString();
+					// BOOST_LOG_CUSTOM(debug, pos) << "LogsBloom:  " << actualHeader.logsBloom.ToString();
+					// BOOST_LOG_CUSTOM(debug, pos) << "Difficulty:  " << actualHeader.difficulty.ToString();
+					// BOOST_LOG_CUSTOM(debug, pos) << "Timestamp:  " << actualHeader.timeStamp;
+					// BOOST_LOG_CUSTOM(debug, pos) << "NUmber:  " << actualHeader.number;
+					// BOOST_LOG_CUSTOM(debug, pos) << "extraData:  " << actualHeader.extraData.ToString();
+					// BOOST_LOG_CUSTOM(debug, pos) << "energyConsumed:  " << actualHeader.energyConsumed;
+					// BOOST_LOG_CUSTOM(debug, pos) << "energyLimit:  " << actualHeader.energyLimit;
+
+				}
+
+				char *tequihash_header = (char *) &ss[0];
+				unsigned int tequihash_header_len = ss.size();
+
 				BOOST_LOG_CUSTOM(debug, pos)
 						<< "Running Equihash solver with nNonce = "
 						<< nonce.ToString();
@@ -319,7 +335,9 @@ void static AionMinerThread(AionMiner* miner, int size, int pos,
 							BOOST_LOG_CUSTOM(debug, pos) << "Found a valid solution";
 
 							EquihashSolution solution {actualHeader.nNonce, actualHeader.nSolution, actualTime, actualNonce1size};
-							miner->submitSolution(solution, actualJobId);
+
+							// submit with udpated timestamp.
+							miner->submitSolution(solution, actualJobId, actualHeader.timeStamp );
 						};
 
 				std::function < bool() > cancelFun = [&cancelSolver]() {
@@ -610,13 +628,14 @@ void AionMiner::setJob(AionJob* job) {
 }
 
 void AionMiner::onSolutionFound(
-		const std::function<bool(const EquihashSolution&, const std::string&)> callback) {
+		const std::function<
+				bool(const EquihashSolution&, const std::string&, uint64_t)> callback) {
 	solutionFoundCallback = callback;
 }
 
 void AionMiner::submitSolution(const EquihashSolution& solution,
-		const std::string& jobid) {
-	solutionFoundCallback(solution, jobid);
+		const std::string& jobid, uint64_t timestamp) {
+	solutionFoundCallback(solution, jobid, timestamp);
 	speed.AddShare();
 }
 

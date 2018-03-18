@@ -263,7 +263,7 @@ var JobManager = module.exports = function JobManager(options){
         }
 
         // check if solution meets target
-        var completeHeader = job.serializeHeaderTarget(nonce, soln);
+        var completeHeader = job.serializeHeaderTarget(nonce, soln, nTime);
         var completeHeaderHash = new Buffer(util.blake2(32, completeHeader), 'hex');
  
         var completeHeaderBigNum = bignum.fromBuffer(completeHeaderHash, {endian: 'big', size: 32});
@@ -312,7 +312,7 @@ var JobManager = module.exports = function JobManager(options){
             blockDiffActual: job.difficulty,
             blockHash:completeHeaderHash.toString('hex'),
             blockHashInvalid: blockHashInvalid
-        }, blockHex, nonce, new Buffer(soln.slice(6), 'hex').toString('hex'), job.headerHash);
+        }, blockHex, nTime, nonce, new Buffer(soln.slice(6), 'hex').toString('hex'), job.headerHash);
 
         return {result: true, error: null, blockHash: blockHash};
     };

@@ -94,6 +94,8 @@ module.exports = function BlockTemplate(
         //Serialize header based on equihash H(I || V || ....)
         //I - 496 bytes, V - 32 bytes 
         
+        //console.log("Serialize Header nTime: " + nTime)
+
         header.write(rpcData.blockHeader.parentHash, position+=0, 32, 'hex'); //Parent Hash - 32 bytes
         header.write(rpcData.blockHeader.coinBase, position+=32, 32, 'hex'); //Coinbase - 32 bytes
         header.write(rpcData.blockHeader.stateRoot, position+=32, 32, 'hex'); //StateRoot - 32 bytes
@@ -101,7 +103,11 @@ module.exports = function BlockTemplate(
         header.write(rpcData.blockHeader.receiptTrieRoot, position+=32, 32, 'hex'); //RecieptTrieRoot - 32 bytes
         header.write(rpcData.blockHeader.logsBloom, position+=32, 256, 'hex'); //LogsBloom - 256 bytes
         header.write(rpcData.blockHeader.difficulty, position+=256, 16, 'hex'); //Difficulty - 16 bytes
-        header.write(rpcData.blockHeader.timestamp, position+=16, 8, 'hex'); //Timestamp - 16 bytes
+        
+        //header.write(rpcData.blockHeader.timestamp, position+=16, 8, 'hex'); //Timestamp - 16 bytes
+        // replace timestamp in blockheader with updated mining timestamp.
+        header.write(nTime, position+=16, 8, 'hex'); //Timestamp - 16 bytes
+        
         header.write(rpcData.blockHeader.number, position+=8, 8, 'hex'); //Block Number - 8 bytes
         header.write(rpcData.blockHeader.extraData, position+=8, 32, 'hex'); //ExtraData - 32 bytes
         header.write(rpcData.blockHeader.energyConsumed, position+=32, 8, 'hex'); //Energy Consumed - 32 bytes
@@ -112,7 +118,7 @@ module.exports = function BlockTemplate(
     }
 
     //AION Block header specialization - TO FINISH TOMORROW
-    this.serializeHeaderTarget = function(nonce, soln){
+    this.serializeHeaderTarget = function(nonce, soln, nTime){
         
         var header = Buffer.alloc(1936)
         var position = 0
@@ -124,7 +130,8 @@ module.exports = function BlockTemplate(
         header.write(rpcData.blockHeader.receiptTrieRoot, position+=32, 32, 'hex'); //RecieptTrieRoot
         header.write(rpcData.blockHeader.logsBloom, position+=32, 256, 'hex'); //LogsBloom
         header.write(rpcData.blockHeader.difficulty, position+=256, 16, 'hex');
-        header.write(rpcData.blockHeader.timestamp, position+=16, 8, 'hex');
+        //header.write(rpcData.blockHeader.timestamp, position+=16, 8, 'hex');
+        header.write(nTime, position+=16, 8, 'hex'); //Timestamp - 16 bytes
         header.write(rpcData.blockHeader.number, position+=8, 8, 'hex'); //Block Number
         header.write(rpcData.blockHeader.extraData, position+=8, 32, 'hex'); //ExtraData
         header.write(nonce, position+=32, 32, 'hex'); //Nonce
