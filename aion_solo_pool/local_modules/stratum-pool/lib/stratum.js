@@ -168,7 +168,7 @@ var StratumClient = function(options){
             return;
         }
         
-        console.log(message.params)
+        //console.log(message.params)
 
         _this.emit('submit',
             {

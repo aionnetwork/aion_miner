@@ -94,7 +94,7 @@ module.exports = function BlockTemplate(
         //Serialize header based on equihash H(I || V || ....)
         //I - 496 bytes, V - 32 bytes 
         
-        console.log("Serialize Header nTime: " + nTime)
+        //console.log("Serialize Header nTime: " + nTime)
 
         header.write(rpcData.blockHeader.parentHash, position+=0, 32, 'hex'); //Parent Hash - 32 bytes
         header.write(rpcData.blockHeader.coinBase, position+=32, 32, 'hex'); //Coinbase - 32 bytes
