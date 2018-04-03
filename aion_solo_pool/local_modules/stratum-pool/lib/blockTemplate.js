@@ -62,20 +62,7 @@ module.exports = function BlockTemplate(
     this.difficulty = parseFloat((diff1 / this.target.toNumber()).toFixed(9))
 
     this.prevHashReversed = util.reverseByteOrder(new Buffer(rpcData.previousblockhash, 'hex')).toString('hex')
-    this.transactionData = Buffer.concat(rpcData.transactions.map(function(tx){
-        return new Buffer(tx.data, 'hex')
-    }))
-    this.merkleTree = new merkleTree(getTransactionBuffers(rpcData.transactions))
-    this.merkleBranch = getMerkleHashes(this.merkleTree.steps)
-    this.generationTransaction = transactions.CreateGeneration(
-        rpcData,
-        poolAddressScript,
-        extraNoncePlaceholder,
-        reward,
-        txMessages,
-        recipients
-    )
-
+    
     this.serializeCoinbase = function(extraNonce1, extraNonce2){
         return Buffer.concat([
             this.generationTransaction[0],
@@ -85,60 +72,32 @@ module.exports = function BlockTemplate(
         ])
     }
 
-    //AION Block header specialization
+    //AION Block header serialization
     this.serializeHeader = function(merkleRoot, nTime, nonce){
         
-        var header =  new Buffer(528)
+        // Double hash serialization header
+
+        var header =  new Buffer(72)
         var position = 0
 
-        //Serialize header based on equihash H(I || V || ....)
-        //I - 496 bytes, V - 32 bytes 
-        
-        //console.log("Serialize Header nTime: " + nTime)
-
-        header.write(rpcData.blockHeader.parentHash, position+=0, 32, 'hex'); //Parent Hash - 32 bytes
-        header.write(rpcData.blockHeader.coinBase, position+=32, 32, 'hex'); //Coinbase - 32 bytes
-        header.write(rpcData.blockHeader.stateRoot, position+=32, 32, 'hex'); //StateRoot - 32 bytes
-        header.write(rpcData.blockHeader.txTrieRoot, position+=32, 32, 'hex'); //TxTrieRoot - 32 bytes
-        header.write(rpcData.blockHeader.receiptTrieRoot, position+=32, 32, 'hex'); //RecieptTrieRoot - 32 bytes
-        header.write(rpcData.blockHeader.logsBloom, position+=32, 256, 'hex'); //LogsBloom - 256 bytes
-        header.write(rpcData.blockHeader.difficulty, position+=256, 16, 'hex'); //Difficulty - 16 bytes
-        
-        //header.write(rpcData.blockHeader.timestamp, position+=16, 8, 'hex'); //Timestamp - 16 bytes
-        // replace timestamp in blockheader with updated mining timestamp.
-        header.write(nTime, position+=16, 8, 'hex'); //Timestamp - 16 bytes
-        
-        header.write(rpcData.blockHeader.number, position+=8, 8, 'hex'); //Block Number - 8 bytes
-        header.write(rpcData.blockHeader.extraData, position+=8, 32, 'hex'); //ExtraData - 32 bytes
-        header.write(rpcData.blockHeader.energyConsumed, position+=32, 8, 'hex'); //Energy Consumed - 32 bytes
-        header.write(rpcData.blockHeader.energyLimit, position+=8, 8, 'hex'); //Energy Limit - 8 bytes
-        header.write(nonce, position+=8, 32, 'hex'); //Nonce - 32 bytes
+        //I - 40 bytes (Partial hash + timestamp), V - 32 bytes
+        header.write(rpcData.partialHash, position, 32, 'hex');
+        header.write(nTime, position+=32, 8, 'hex');
+        header.write(nonce, position+=8, 32, 'hex');
 
         return header
     }
 
-    //AION Block header specialization - TO FINISH TOMORROW
+    //AION Block header serialization
     this.serializeHeaderTarget = function(nonce, soln, nTime){
-        
-        var header = Buffer.alloc(1936)
-        var position = 0
-        
-        header.write(rpcData.blockHeader.parentHash, position+=0, 32, 'hex'); //Parent Hash
-        header.write(rpcData.blockHeader.coinBase, position+=32, 32, 'hex'); //Coinbase
-        header.write(rpcData.blockHeader.stateRoot, position+=32, 32, 'hex'); //StateRoot
-        header.write(rpcData.blockHeader.txTrieRoot, position+=32, 32, 'hex'); //TxTrieRoot
-        header.write(rpcData.blockHeader.receiptTrieRoot, position+=32, 32, 'hex'); //RecieptTrieRoot
-        header.write(rpcData.blockHeader.logsBloom, position+=32, 256, 'hex'); //LogsBloom
-        header.write(rpcData.blockHeader.difficulty, position+=256, 16, 'hex');
-        //header.write(rpcData.blockHeader.timestamp, position+=16, 8, 'hex');
-        header.write(nTime, position+=16, 8, 'hex'); //Timestamp - 16 bytes
-        header.write(rpcData.blockHeader.number, position+=8, 8, 'hex'); //Block Number
-        header.write(rpcData.blockHeader.extraData, position+=8, 32, 'hex'); //ExtraData
-        header.write(nonce, position+=32, 32, 'hex'); //Nonce
-        header.write(soln.slice(6), position+=32, 1408, 'hex'); //Solution
-        header.write(rpcData.blockHeader.energyConsumed, position+=1408, 8, 'hex'); //Energy Consumed
-        header.write(rpcData.blockHeader.energyLimit, position+=8, 8, 'hex'); //Energy Limit
 
+        var header = Buffer.alloc(1480);
+        var position = 0;
+
+        header.write(rpcData.partialHash, position, 32, 'hex'); //Partial Hash
+        header.write(nTime, position+=32, 8, 'hex'); //Timestamp
+        header.write(nonce, position+=8, 32, 'hex'); //Nonce
+        header.write(soln.slice(6), position+=32, 1408, 'hex'); //Solution
         return header
     }
 
@@ -173,20 +132,9 @@ module.exports = function BlockTemplate(
 
                 //Aion Job Params
                 this.jobId,
-                this.rpcData.blockHeader.parentHash,
-                this.rpcData.blockHeader.coinBase,
-                this.rpcData.blockHeader.stateRoot,
-                this.rpcData.blockHeader.txTrieRoot,
-                this.rpcData.blockHeader.receiptTrieRoot,
-                this.rpcData.blockHeader.logsBloom,
-                this.rpcData.blockHeader.difficulty,
-                this.rpcData.blockHeader.timestamp,
-                this.rpcData.blockHeader.number,
-                this.rpcData.blockHeader.extraData,
-                this.rpcData.blockHeader.energyConsumed,
-                this.rpcData.blockHeader.energyLimit,
-                true,
-                this.rpcData.target
+                true, // Clean job
+                this.rpcData.target,
+                this.rpcData.partialHash
             ]
         }
         return this.jobParams

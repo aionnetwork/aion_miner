@@ -247,38 +247,48 @@ void static AionMinerThread(AionMiner* miner, int size, int pos,
 							//Create a new vector with size equaling a full header
 							std::vector<uint8_t> headerBytes;
 							//Reserve header + nonce + solution size
-							headerBytes.reserve(actualHeader.HEADER_SIZE + 1408 + 32);
+							headerBytes.reserve(actualHeader.HEADER_SIZE + 32 + 1408);
 
-							headerBytes.insert(headerBytes.end(), actualHeader.parentHash.begin(), actualHeader.parentHash.end());
-							headerBytes.insert(headerBytes.end(), actualHeader.coinBase.begin(), actualHeader.coinBase.end());
-							headerBytes.insert(headerBytes.end(), actualHeader.stateRoot.begin(), actualHeader.stateRoot.end());
-							headerBytes.insert(headerBytes.end(), actualHeader.txTrie.begin(), actualHeader.txTrie.end());
-							headerBytes.insert(headerBytes.end(), actualHeader.receiptTreeRoot.begin(), actualHeader.receiptTreeRoot.end());
-							headerBytes.insert(headerBytes.end(), actualHeader.logsBloom.begin(), actualHeader.logsBloom.end());
-							headerBytes.insert(headerBytes.end(), actualHeader.difficulty.begin(), actualHeader.difficulty.end());
+							// headerBytes.insert(headerBytes.end(), actualHeader.parentHash.begin(), actualHeader.parentHash.end());
+							// headerBytes.insert(headerBytes.end(), actualHeader.coinBase.begin(), actualHeader.coinBase.end());
+							// headerBytes.insert(headerBytes.end(), actualHeader.stateRoot.begin(), actualHeader.stateRoot.end());
+							// headerBytes.insert(headerBytes.end(), actualHeader.txTrie.begin(), actualHeader.txTrie.end());
+							// headerBytes.insert(headerBytes.end(), actualHeader.receiptTreeRoot.begin(), actualHeader.receiptTreeRoot.end());
+							// headerBytes.insert(headerBytes.end(), actualHeader.logsBloom.begin(), actualHeader.logsBloom.end());
+							// headerBytes.insert(headerBytes.end(), actualHeader.difficulty.begin(), actualHeader.difficulty.end());
+							// uint8_t * timestamp = (uint8_t*)&actualHeader.timeStamp;
+							// for(int i = 0; i < 8; i++) {
+							// 	headerBytes.push_back(*(timestamp+i));
+							// }
+
+							// uint8_t * number = (uint8_t*)&actualHeader.number;
+							// for(int i = 0; i < 8; i++) {
+							// 	headerBytes.push_back(*(number+i));
+							// }
+
+							// headerBytes.insert(headerBytes.end(), actualHeader.extraData.begin(), actualHeader.extraData.end());
+							// headerBytes.insert(headerBytes.end(), actualHeader.nNonce.begin(), actualHeader.nNonce.end());
+							// headerBytes.insert(headerBytes.end(), actualHeader.nSolution.begin(), actualHeader.nSolution.end());
+
+							// uint8_t * energyConsumed = (uint8_t*)&actualHeader.energyConsumed;
+							// for(int i = 0; i < 8; i++) {
+							// 	headerBytes.push_back(*(energyConsumed + i));
+							// }
+
+							// uint8_t * energyLimit = (uint8_t*)&actualHeader.energyLimit;
+							// for(int i = 0; i < 8; i++) {
+							// 	headerBytes.push_back(*(energyLimit+i));
+							// }
+
+							headerBytes.insert(headerBytes.end(), actualHeader.partialHash.begin(), actualHeader.partialHash.end());
+
 							uint8_t * timestamp = (uint8_t*)&actualHeader.timeStamp;
 							for(int i = 0; i < 8; i++) {
 								headerBytes.push_back(*(timestamp+i));
 							}
-
-							uint8_t * number = (uint8_t*)&actualHeader.number;
-							for(int i = 0; i < 8; i++) {
-								headerBytes.push_back(*(number+i));
-							}
-
-							headerBytes.insert(headerBytes.end(), actualHeader.extraData.begin(), actualHeader.extraData.end());
 							headerBytes.insert(headerBytes.end(), actualHeader.nNonce.begin(), actualHeader.nNonce.end());
 							headerBytes.insert(headerBytes.end(), actualHeader.nSolution.begin(), actualHeader.nSolution.end());
 
-							uint8_t * energyConsumed = (uint8_t*)&actualHeader.energyConsumed;
-							for(int i = 0; i < 8; i++) {
-								headerBytes.push_back(*(energyConsumed + i));
-							}
-
-							uint8_t * energyLimit = (uint8_t*)&actualHeader.energyLimit;
-							for(int i = 0; i < 8; i++) {
-								headerBytes.push_back(*(energyLimit+i));
-							}
 
 							BOOST_LOG_CUSTOM(debug, pos) << "headerBytes size: " << headerBytes.size();
 
@@ -561,46 +571,62 @@ AionJob* AionMiner::parseJob(const Array& params) {
 	AionJob* ret = new AionJob();
 	ret->job = params[0].get_str(); //JobId
 
-	if (params.size() < 14) {
+	if (params.size() != 4) {
 		throw std::logic_error("Invalid job params");
 	}
 
+
+	uint64_t lets =
+		std::chrono::duration_cast
+		< std::chrono::milliseconds
+		> (std::chrono::system_clock::now().time_since_epoch()).count();
+	lets /= 1000;
+
 	std::stringstream ssHeader;
 	ssHeader
-			<< params[1].get_str()    //Parent Hash
-			<< params[2].get_str() //Coinbase
-			<< params[3].get_str() //State Root
-			<< params[4].get_str() //TxTrie Root
-			<< params[5].get_str() //RecieptTrie Root
-			<< params[6].get_str() //LogsBloom
-			<< params[7].get_str() //Difficulty
-			<< params[8].get_str() //Timestamp
-			<< params[9].get_str() //Block Number
-			<< params[10].get_str() //extradata
-			<< params[11].get_str() //Energy Consumed
-			<< params[12].get_str() //Energy Limit
+			// << params[1].get_str()    //Parent Hash
+			// << params[2].get_str() //Coinbase
+			// << params[3].get_str() //State Root
+			// << params[4].get_str() //TxTrie Root
+			// << params[5].get_str() //RecieptTrie Root
+			// << params[6].get_str() //LogsBloom
+			// << params[7].get_str() //Difficulty
+			// << params[8].get_str() //Timestamp
+			// << params[9].get_str() //Block Number
+			// << params[10].get_str() //extradata
+			// << params[11].get_str() //Energy Consumed
+			// << params[12].get_str() //Energy Limit
 
 			// Empty nonce
+			// << "0000000000000000000000000000000000000000000000000000000000000000"
+			// << "00"; // Empty solution
+
+			<< params[3].get_str()
+			<< __bswap_64(lets)
+			// Empty nonce & solution
 			<< "0000000000000000000000000000000000000000000000000000000000000000"
-			<< "00"; // Empty solution
+			<< "00";
+
 	auto strHexHeader = ssHeader.str();
 	std::vector<unsigned char> headerData(ParseHex(strHexHeader));
 
 	CDataStream ss(headerData, SER_NETWORK, PROTOCOL_VERSION);
 	try {
 
-		BOOST_LOG_CUSTOM(debug, 0) << "Param 1: " << params[1].get_str();
-		BOOST_LOG_CUSTOM(debug, 0) << "Param 2: " << params[2].get_str();
-		BOOST_LOG_CUSTOM(debug, 0) << "Param 3: " << params[3].get_str();
-		BOOST_LOG_CUSTOM(debug, 0) << "Param 4: " << params[4].get_str();
-		BOOST_LOG_CUSTOM(debug, 0) << "Param 5: " << params[5].get_str();
-		BOOST_LOG_CUSTOM(debug, 0) << "Param 6: " << params[6].get_str();
-		BOOST_LOG_CUSTOM(debug, 0) << "Param 7: " << params[7].get_str();
-		BOOST_LOG_CUSTOM(debug, 0) << "Param 8: " << params[8].get_str();
-		BOOST_LOG_CUSTOM(debug, 0) << "Param 9: " << params[9].get_str();
-		BOOST_LOG_CUSTOM(debug, 0) << "Param 10: " << params[10].get_str();
-		BOOST_LOG_CUSTOM(debug, 0) << "Param 11: " << params[11].get_str();
-		BOOST_LOG_CUSTOM(debug, 0) << "Param 12: " << params[12].get_str();
+		// BOOST_LOG_CUSTOM(debug, 0) << "Param 1: " << params[1].get_str();
+		// BOOST_LOG_CUSTOM(debug, 0) << "Param 2: " << params[2].get_str();
+		// BOOST_LOG_CUSTOM(debug, 0) << "Param 3: " << params[3].get_str();
+		// BOOST_LOG_CUSTOM(debug, 0) << "Param 4: " << params[4].get_str();
+		// BOOST_LOG_CUSTOM(debug, 0) << "Param 5: " << params[5].get_str();
+		// BOOST_LOG_CUSTOM(debug, 0) << "Param 6: " << params[6].get_str();
+		// BOOST_LOG_CUSTOM(debug, 0) << "Param 7: " << params[7].get_str();
+		// BOOST_LOG_CUSTOM(debug, 0) << "Param 8: " << params[8].get_str();
+		// BOOST_LOG_CUSTOM(debug, 0) << "Param 9: " << params[9].get_str();
+		// BOOST_LOG_CUSTOM(debug, 0) << "Param 10: " << params[10].get_str();
+		// BOOST_LOG_CUSTOM(debug, 0) << "Param 11: " << params[11].get_str();
+		// BOOST_LOG_CUSTOM(debug, 0) << "Param 12: " << params[12].get_str();
+
+		BOOST_LOG_CUSTOM(debug, 0) << "Partial Hash: " << params[3].get_str();
 
 		ss >> ret->header;
 
@@ -610,15 +636,15 @@ AionJob* AionMiner::parseJob(const Array& params) {
 				"AionMiner::parseJob(): Invalid block header parameters");
 	}
 
-	ret->time = params[8].get_str();
-	ret->clean = params[13].get_bool();
+	// ret->time = params[8].get_str();
+	ret->clean = params[1].get_bool();
 
 	ret->header.nNonce = nonce1;
 	ret->nonce1Size = nonce1Size;
 	ret->nonce2Space = nonce2Space;
 	ret->nonce2Inc = nonce2Inc;
 
-	ret->setTarget(params[14].get_str());
+	ret->setTarget(params[2].get_str());
 
 	return ret;
 }

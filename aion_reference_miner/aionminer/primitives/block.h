@@ -41,20 +41,28 @@ public:
 	Total: 484 bytes
 	*/
 
-	static const size_t HEADER_SIZE = 32 + 32 + 32 + 32 + 32 + 256 + 16 + 8 + 8 + 32 + 8 + 8; // excluding Equihash solution and nonce
+	// static const size_t HEADER_SIZE = 32 + 32 + 32 + 32 + 32 + 256 + 16 + 8 + 8 + 32 + 8 + 8; // excluding Equihash solution and nonce
 
-	uint256 parentHash;
-	uint256 coinBase;
-	uint256 stateRoot;
-	uint256 txTrie;
-	uint256 receiptTreeRoot;
-	uint2048 logsBloom;
-	uint128 difficulty;
+	// uint256 parentHash;
+	// uint256 coinBase;
+	// uint256 stateRoot;
+	// uint256 txTrie;
+	// uint256 receiptTreeRoot;
+	// uint2048 logsBloom;
+	// uint128 difficulty;
+	// uint64_t timeStamp;
+	// uint64_t number;
+	// uint256 extraData;
+	// uint64_t energyConsumed;
+	// uint64_t energyLimit;
+
+	// uint256 nNonce;
+	// std::vector<unsigned char> nSolution;
+
+	static const size_t HEADER_SIZE = 32 + 8; //Partial hash of header + timestamp (excluding nonce and solution)
+
+	uint256 partialHash;
 	uint64_t timeStamp;
-	uint64_t number;
-	uint256 extraData;
-	uint64_t energyConsumed;
-	uint64_t energyLimit;
 
 	uint256 nNonce;
 	std::vector<unsigned char> nSolution;
@@ -69,46 +77,50 @@ public:
 	template <typename Stream, typename Operation>
 	inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
 
-		READWRITE(parentHash);
-		READWRITE(coinBase);
-		READWRITE(stateRoot);
-		READWRITE(txTrie);
-		READWRITE(receiptTreeRoot);
-		READWRITE(logsBloom);
-		READWRITE(difficulty);
-		READWRITE(timeStamp);
-		READWRITE(number);
-		READWRITE(extraData);
-		READWRITE(energyConsumed);
-		READWRITE(energyLimit);
+		// READWRITE(parentHash);
+		// READWRITE(coinBase);
+		// READWRITE(stateRoot);
+		// READWRITE(txTrie);
+		// READWRITE(receiptTreeRoot);
+		// READWRITE(logsBloom);
+		// READWRITE(difficulty);
+		// READWRITE(timeStamp);
+		// READWRITE(number);
+		// READWRITE(extraData);
+		// READWRITE(energyConsumed);
+		// READWRITE(energyLimit);
 
-		
+		READWRITE(partialHash);
+		READWRITE(timeStamp);
+
 		READWRITE(nNonce);
 		READWRITE(nSolution);
 	}
 
 	void SetNull()
 	{
-		parentHash.SetNull();
-        coinBase.SetNull();
-		stateRoot.SetNull();
-		txTrie.SetNull();
-		receiptTreeRoot.SetNull();
-		logsBloom.SetNull();
-		difficulty.SetNull();
+		partialHash.SetNull();
 		timeStamp = 0;
-		number = 0;
-		extraData.SetNull();
-		energyConsumed = 0;
-		energyLimit = 0;
+		// parentHash.SetNull();
+        // coinBase.SetNull();
+		// stateRoot.SetNull();
+		// txTrie.SetNull();
+		// receiptTreeRoot.SetNull();
+		// logsBloom.SetNull();
+		// difficulty.SetNull();
+		// timeStamp = 0;
+		// number = 0;
+		// extraData.SetNull();
+		// energyConsumed = 0;
+		// energyLimit = 0;
 		nNonce = uint256();
 		nSolution.clear();
 	}
 
-	bool IsNull() const
-	{
-		return (number == 0);
-	}
+	// bool IsNull() const
+	// {
+	// 	return (number == 0);
+	// }
 
 	uint256 GetHash() const;
 
@@ -158,18 +170,20 @@ public:
 	{
 		ABlockHeader block;
 
-		block.parentHash = parentHash;
-        block.coinBase = coinBase;
-		block.stateRoot = stateRoot;
-		block.txTrie = txTrie;
-		block.receiptTreeRoot = receiptTreeRoot;
-        block.logsBloom = logsBloom;
-		block.difficulty = difficulty;
+		block.partialHash = partialHash;
 		block.timeStamp = timeStamp;
-		block.number = number;
-		block.extraData = extraData;
-		block.energyConsumed = energyConsumed;
-		block.energyLimit = energyLimit;
+		// block.parentHash = parentHash;
+        // block.coinBase = coinBase;
+		// block.stateRoot = stateRoot;
+		// block.txTrie = txTrie;
+		// block.receiptTreeRoot = receiptTreeRoot;
+        // block.logsBloom = logsBloom;
+		// block.difficulty = difficulty;
+		// block.timeStamp = timeStamp;
+		// block.number = number;
+		// block.extraData = extraData;
+		// block.energyConsumed = energyConsumed;
+		// block.energyLimit = energyLimit;
 		block.nNonce = nNonce;
 		block.nSolution = nSolution;
 		return block;
@@ -197,18 +211,21 @@ public:
 	template <typename Stream, typename Operation>
 	inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
 
-		READWRITE(parentHash);
-		READWRITE(coinBase);
-		READWRITE(stateRoot);
-		READWRITE(txTrie);
-		READWRITE(receiptTreeRoot);
-		READWRITE(logsBloom);
-		READWRITE(difficulty);
+		// READWRITE(parentHash);
+		// READWRITE(coinBase);
+		// READWRITE(stateRoot);
+		// READWRITE(txTrie);
+		// READWRITE(receiptTreeRoot);
+		// READWRITE(logsBloom);
+		// READWRITE(difficulty);
+		// READWRITE(timeStamp);
+		// READWRITE(number);
+		// READWRITE(extraData);
+		// READWRITE(energyConsumed);
+		// READWRITE(energyLimit);
+
+		READWRITE(partialHash);
 		READWRITE(timeStamp);
-		READWRITE(number);
-		READWRITE(extraData);
-		READWRITE(energyConsumed);
-		READWRITE(energyLimit);
 	}
 };
 

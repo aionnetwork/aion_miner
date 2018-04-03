@@ -71,6 +71,7 @@ var StratumClient = function(options){
                 handleAuthorize(message, true /*reply to socket*/);
                 break;
             case 'mining.submit':
+                console.log("Received submit " + message);
                 _this.lastActivity = Date.now();
                 handleSubmit(message);
                 break;
@@ -168,7 +169,7 @@ var StratumClient = function(options){
             return;
         }
         
-        //console.log(message.params)
+        console.log(message.params)
 
         _this.emit('submit',
             {
@@ -409,6 +410,9 @@ var StratumServer = exports.Server = function StratumServer(options, authorizeFn
 
 
     this.broadcastMiningJobs = function(jobParams){
+
+        console.log("Sending Job" + jobParams);
+
         for (var clientId in stratumClients) {
             var client = stratumClients[clientId];
             client.sendMiningJob(jobParams);

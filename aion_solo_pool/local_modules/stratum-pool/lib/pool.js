@@ -227,7 +227,7 @@ var pool = module.exports = function pool(options, authorizeFn){
     /*
     Coin daemons either use submitblock or getblocktemplate for submitting new blocks
      */
-    function SubmitBlock(blockHex, nTime, nonce, solution, headerHash, callback){
+    function SubmitBlock(nTime, nonce, solution, headerHash, callback){
 
 
         //TODO: Invstigate how to switch between these two, use submit for now
@@ -313,9 +313,9 @@ var pool = module.exports = function pool(options, authorizeFn){
                 job[13] = true;
                 _this.stratumServer.broadcastMiningJobs(job);
             }
-        }).on('share', function(shareData, blockHex, nTime, nonce, solution, headerHash){
+        }).on('share', function(shareData, nTime, nonce, solution, headerHash){
             var isValidShare = !shareData.error;
-            var isValidBlock = !!blockHex && !!nonce && !!solution;
+            var isValidBlock = !!nonce && !!solution;
             
             var emitShare = function(){
                 _this.emit('share', isValidShare, isValidBlock, shareData);
@@ -332,7 +332,7 @@ var pool = module.exports = function pool(options, authorizeFn){
             if (!isValidBlock)
                 emitShare();
             else{
-                SubmitBlock(blockHex, nTime, nonce, solution, headerHash, function(){
+                SubmitBlock(nTime, nonce, solution, headerHash, function(){
 
                     //RK - Assume block has been accepted
                     //Get the new block template after 0.5 sec
@@ -500,6 +500,10 @@ var pool = module.exports = function pool(options, authorizeFn){
 
                 var extraNonce = _this.jobManager.extraNonceCounter.next();
                 var extraNonce2Size = _this.jobManager.extraNonce2Size;
+
+                console.log("extraNonce: " + extraNonce);
+                console.log("extraNonce2Size: " + extraNonce2Size);
+
                 resultCallback(null,
                     extraNonce,
                     extraNonce2Size

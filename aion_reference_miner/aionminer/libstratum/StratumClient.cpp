@@ -448,7 +448,7 @@ bool StratumClient<Miner, Job, Solution>::submit(const Solution* solution,
 	os << json;
 	BOOST_LOG_CUSTOM(trace) << "Sending: " << json;
 	write(m_socket, m_requestBuffer);
-
+	BOOST_LOG_CUSTOM(trace) << "Write Completed";
 	return true;
 }
 

@@ -21,7 +21,7 @@ var ExtraNonceCounter = function(configInstanceId){
         return extraNonce.toString('hex');
     };
 
-    this.size = 4; //bytes
+    this.size = 8; //bytes
 };
 
 //Unique job per new block template
@@ -199,7 +199,7 @@ var JobManager = module.exports = function JobManager(options){
     };
 
     this.processShare = function (jobId, previousDifficulty, difficulty, extraNonce1, extraNonce2, nTime, nonce, ipAddress, port, workerName, soln) {
-
+        
         var shareError = function (error) {
             _this.emit('share', {
                 job: jobId,
@@ -296,7 +296,6 @@ var JobManager = module.exports = function JobManager(options){
         //     }
         // }
 
-        blockHex = job.serializeBlock(headerBuffer, new Buffer(soln, 'hex')).toString('hex');
         blockHash = util.reverseBuffer(headerHash).toString('hex');
 
         _this.emit('share', {
@@ -312,7 +311,7 @@ var JobManager = module.exports = function JobManager(options){
             blockDiffActual: job.difficulty,
             blockHash:completeHeaderHash.toString('hex'),
             blockHashInvalid: blockHashInvalid
-        }, blockHex, nTime, nonce, new Buffer(soln.slice(6), 'hex').toString('hex'), job.headerHash);
+        }, nTime, nonce, new Buffer(soln.slice(6), 'hex').toString('hex'), job.headerHash);
 
         return {result: true, error: null, blockHash: blockHash};
     };
