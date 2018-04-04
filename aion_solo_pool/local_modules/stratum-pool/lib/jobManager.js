@@ -311,7 +311,8 @@ var JobManager = module.exports = function JobManager(options){
             blockDiff: blockDiffAdjusted,
             blockDiffActual: job.difficulty,
             blockHash:completeHeaderHash.toString('hex'),
-            blockHashInvalid: blockHashInvalid
+            blockHashInvalid: blockHashInvalid, 
+            staticHash: job.rpcData.headerHash
         }, blockHex, nTime, nonce, new Buffer(soln.slice(6), 'hex').toString('hex'), job.headerHash);
 
         return {result: true, error: null, blockHash: blockHash};

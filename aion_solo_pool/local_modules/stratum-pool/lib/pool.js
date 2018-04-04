@@ -337,7 +337,7 @@ var pool = module.exports = function pool(options, authorizeFn){
                     //RK - Assume block has been accepted
                     //Get the new block template after 0.5 sec
 
-                    CheckBlockAccepted(shareData.height, shareData.blockHash, function(isAccepted){
+                    CheckBlockAccepted(shareData.height, shareData.staticHash, function(isAccepted){
                         isValidBlock = isAccepted;
                         emitShare();
                         
@@ -348,7 +348,7 @@ var pool = module.exports = function pool(options, authorizeFn){
                             });
                         };
     
-                        setTimeout(getBlockTemplateFunction, 500);
+                        setTimeout(getBlockTemplateFunction, 2000);
                     });
 
                 });
@@ -607,12 +607,12 @@ var pool = module.exports = function pool(options, authorizeFn){
 
 
 
-    function CheckBlockAccepted(blockHeight, blockHash, callback){
+    function CheckBlockAccepted(blockHeight, staticHash, callback){
         setTimeout(function(){
             _this.daemon.cmd('getHeaderByBlockNumber',
                 [blockHeight],
                 function(results){
-                    callback(results[0].response && (results[0].response.headerHash === blockHash));
+                    callback(results[0].response && (results[0].response.headerHash === staticHash));
                 }
             );
         }, 1000);
