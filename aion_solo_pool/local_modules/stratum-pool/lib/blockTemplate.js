@@ -88,7 +88,7 @@ module.exports = function BlockTemplate(
         return header
     }
 
-    //AION Block header serialization
+    //AION Block header specialization
     this.serializeHeaderTarget = function(nonce, soln, nTime){
 
         var header = Buffer.alloc(1480);

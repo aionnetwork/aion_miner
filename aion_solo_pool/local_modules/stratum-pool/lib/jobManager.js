@@ -13,12 +13,22 @@ var blockTemplate = require('./blockTemplate.js');
 //Unique extranonce per subscriber
 var ExtraNonceCounter = function(configInstanceId){
 
+    if(typeof configInstanceId == 'undefined' && configInstanceId) {
+        configInstanceId = crypto.randomBytes(4).readUInt32LE(0);
+    }
+
     var instanceId = configInstanceId || crypto.randomBytes(4).readUInt32LE(0);
-    var counter = instanceId << 27;
+    var counter = 0;
 
     this.next = function(){
-        var extraNonce = util.packUInt32BE(Math.abs(counter++));
-        return extraNonce.toString('hex');
+
+        var buff = new Buffer(8);
+        buff.writeUInt32BE(instanceId, 0);
+        buff.writeUInt32BE(Math.abs(counter++), 4);
+        return buff.toString('hex');
+
+        // var extraNonce = util.packUInt32BE(Math.abs(counter++));
+        // return extraNonce.toString('hex');
     };
 
     this.size = 8; //bytes
@@ -310,7 +320,8 @@ var JobManager = module.exports = function JobManager(options){
             blockDiff: blockDiffAdjusted,
             blockDiffActual: job.difficulty,
             blockHash:completeHeaderHash.toString('hex'),
-            blockHashInvalid: blockHashInvalid
+            blockHashInvalid: blockHashInvalid, 
+            staticHash: job.rpcData.headerHash
         }, nTime, nonce, new Buffer(soln.slice(6), 'hex').toString('hex'), job.headerHash);
 
         return {result: true, error: null, blockHash: blockHash};
