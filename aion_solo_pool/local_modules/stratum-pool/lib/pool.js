@@ -501,9 +501,6 @@ var pool = module.exports = function pool(options, authorizeFn){
                 var extraNonce = _this.jobManager.extraNonceCounter.next();
                 var extraNonce2Size = _this.jobManager.extraNonce2Size;
 
-                console.log("extraNonce: " + extraNonce);
-                console.log("extraNonce2Size: " + extraNonce2Size);
-
                 resultCallback(null,
                     extraNonce,
                     extraNonce2Size
