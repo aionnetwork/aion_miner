@@ -180,18 +180,18 @@ void static AionMinerThread(AionMiner* miner, int size, int pos,
 				CDataStream ss(SER_NETWORK, PROTOCOL_VERSION);
 				{
 
-					//  get timestamp in seonds.
-					uint64_t lets =
-							std::chrono::duration_cast
-									< std::chrono::milliseconds
-									> (std::chrono::system_clock::now().time_since_epoch()).count();
-					lets /= 1000;
+					// //  get timestamp in seconds.
+					// uint64_t lets =
+					// 		std::chrono::duration_cast
+					// 				< std::chrono::milliseconds
+					// 				> (std::chrono::system_clock::now().time_since_epoch()).count();
+					// lets /= 1000;
 
-					// convert to BE
-					uint64_t bets = __bswap_64(lets);
+					// // convert to BE
+					// uint64_t bets = __bswap_64(lets);
 
-					// update the header.
-					actualHeader.timeStamp = bets;
+					// // update the header.
+					// actualHeader.timeStamp = bets;
 
 					// steam out for hash iteration.
 					AEquihashInput I { actualHeader };
@@ -280,12 +280,12 @@ void static AionMinerThread(AionMiner* miner, int size, int pos,
 							// 	headerBytes.push_back(*(energyLimit+i));
 							// }
 
-							headerBytes.insert(headerBytes.end(), actualHeader.partialHash.begin(), actualHeader.partialHash.end());
+							headerBytes.insert(headerBytes.end(), actualHeader.headerHash.begin(), actualHeader.headerHash.end());
 
-							uint8_t * timestamp = (uint8_t*)&actualHeader.timeStamp;
-							for(int i = 0; i < 8; i++) {
-								headerBytes.push_back(*(timestamp+i));
-							}
+							// uint8_t * timestamp = (uint8_t*)&actualHeader.timeStamp;
+							// for(int i = 0; i < 8; i++) {
+							// 	headerBytes.push_back(*(timestamp+i));
+							// }
 							headerBytes.insert(headerBytes.end(), actualHeader.nNonce.begin(), actualHeader.nNonce.end());
 							headerBytes.insert(headerBytes.end(), actualHeader.nSolution.begin(), actualHeader.nSolution.end());
 
@@ -346,8 +346,19 @@ void static AionMinerThread(AionMiner* miner, int size, int pos,
 
 							EquihashSolution solution {actualHeader.nNonce, actualHeader.nSolution, actualTime, actualNonce1size};
 
-							// submit with udpated timestamp.
-							miner->submitSolution(solution, actualJobId, actualHeader.timeStamp );
+
+							//  get timestamp in seconds.
+							uint64_t lets =
+									std::chrono::duration_cast
+											< std::chrono::milliseconds
+											> (std::chrono::system_clock::now().time_since_epoch()).count();
+							lets /= 1000;
+
+							// convert to BE
+							uint64_t bets = __bswap_64(lets);
+
+							// submit with timestamp of submission
+							miner->submitSolution(solution, actualJobId, bets);
 						};
 
 				std::function < bool() > cancelFun = [&cancelSolver]() {
@@ -575,13 +586,6 @@ AionJob* AionMiner::parseJob(const Array& params) {
 		throw std::logic_error("Invalid job params");
 	}
 
-
-	uint64_t lets =
-		std::chrono::duration_cast
-		< std::chrono::milliseconds
-		> (std::chrono::system_clock::now().time_since_epoch()).count();
-	lets /= 1000;
-
 	std::stringstream ssHeader;
 	ssHeader
 			// << params[1].get_str()    //Parent Hash
@@ -602,7 +606,6 @@ AionJob* AionMiner::parseJob(const Array& params) {
 			// << "00"; // Empty solution
 
 			<< params[3].get_str()
-			<< __bswap_64(lets)
 			// Empty nonce & solution
 			<< "0000000000000000000000000000000000000000000000000000000000000000"
 			<< "00";
@@ -626,7 +629,7 @@ AionJob* AionMiner::parseJob(const Array& params) {
 		// BOOST_LOG_CUSTOM(debug, 0) << "Param 11: " << params[11].get_str();
 		// BOOST_LOG_CUSTOM(debug, 0) << "Param 12: " << params[12].get_str();
 
-		BOOST_LOG_CUSTOM(debug, 0) << "Partial Hash: " << params[3].get_str();
+		BOOST_LOG_CUSTOM(debug, 0) << "HeaderHash: " << params[3].get_str();
 
 		ss >> ret->header;
 
