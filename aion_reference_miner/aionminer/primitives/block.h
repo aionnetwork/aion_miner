@@ -59,10 +59,9 @@ public:
 	// uint256 nNonce;
 	// std::vector<unsigned char> nSolution;
 
-	static const size_t HEADER_SIZE = 32 + 8; //Partial hash of header + timestamp (excluding nonce and solution)
+	static const size_t HEADER_SIZE = 32; //headerHash
 
-	uint256 partialHash;
-	uint64_t timeStamp;
+	uint256 headerHash;
 
 	uint256 nNonce;
 	std::vector<unsigned char> nSolution;
@@ -90,8 +89,7 @@ public:
 		// READWRITE(energyConsumed);
 		// READWRITE(energyLimit);
 
-		READWRITE(partialHash);
-		READWRITE(timeStamp);
+		READWRITE(headerHash);
 
 		READWRITE(nNonce);
 		READWRITE(nSolution);
@@ -99,8 +97,7 @@ public:
 
 	void SetNull()
 	{
-		partialHash.SetNull();
-		timeStamp = 0;
+		headerHash.SetNull();
 		// parentHash.SetNull();
         // coinBase.SetNull();
 		// stateRoot.SetNull();
@@ -124,10 +121,10 @@ public:
 
 	uint256 GetHash() const;
 
-	int64_t GetBlockTime() const
-	{
-		return timeStamp;
-	}
+	// int64_t GetBlockTime() const
+	// {
+	// 	return timeStamp;
+	// }
 };
 
 
@@ -170,8 +167,7 @@ public:
 	{
 		ABlockHeader block;
 
-		block.partialHash = partialHash;
-		block.timeStamp = timeStamp;
+		block.headerHash = headerHash;
 		// block.parentHash = parentHash;
         // block.coinBase = coinBase;
 		// block.stateRoot = stateRoot;
@@ -224,8 +220,7 @@ public:
 		// READWRITE(energyConsumed);
 		// READWRITE(energyLimit);
 
-		READWRITE(partialHash);
-		READWRITE(timeStamp);
+		READWRITE(headerHash);
 	}
 };
 

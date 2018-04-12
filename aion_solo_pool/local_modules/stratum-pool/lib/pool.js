@@ -337,7 +337,7 @@ var pool = module.exports = function pool(options, authorizeFn){
                     //RK - Assume block has been accepted
                     //Get the new block template after 0.5 sec
 
-                    CheckBlockAccepted(shareData.height, shareData.staticHash, function(isAccepted){
+                    CheckBlockAccepted(shareData.height, shareData.headerHash, function(isAccepted){
                         isValidBlock = isAccepted;
                         emitShare();
                         
@@ -608,12 +608,12 @@ var pool = module.exports = function pool(options, authorizeFn){
 
 
 
-    function CheckBlockAccepted(blockHeight, staticHash, callback){
+    function CheckBlockAccepted(blockHeight, headerHash, callback){
         setTimeout(function(){
             _this.daemon.cmd('getHeaderByBlockNumber',
                 [blockHeight],
                 function(results){
-                    callback(results[0].response && (results[0].response.headerHash === staticHash));
+                    callback(results[0].response && (results[0].response.headerHash === headerHash));
                 }
             );
         }, 1000);

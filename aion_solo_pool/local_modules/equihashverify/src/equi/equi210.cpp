@@ -29,7 +29,7 @@ bool verifyEH(const char *hdr, const char *soln, int n, int k){
     EhInitialiseState(n, k, &state);
 
     //Update header and nonce in same call
-    blake2b_update(&state, (unsigned char*)&hdr[0], 72);
+    blake2b_update(&state, (unsigned char*)&hdr[0], 64);
 
     std::vector<unsigned char> minimal(soln, soln + 1408);
 
