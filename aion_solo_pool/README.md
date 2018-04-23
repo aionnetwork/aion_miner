@@ -20,17 +20,26 @@ This is an Aion mining pool designed to be used in conjunction with the Aion min
 - Open 2 terminal windows; using the first window navigate to your Aion kernel.
 - Open the Aion configuration located in config/config.xml
 - Disable kernel mining.
-- Set the miner address to the address which will receive mined block rewards. The address is a 64 character (32 byte) hex string containing the public key and address of an account. 
+- Set the miner address to the address which will receive mined block rewards. The address is a 64 character (32 byte) hex string containing the public key and address of an account. The address MUST begin with a0 as these these are the only valid addresses in the Aion network. 
 
   Eg.
   ```
     <consensus>
             <mining>false</mining>
-            <miner-address>4cfb91f3053ee1b87ac5a7a1d9de0f5a14b71b642ae1d872f70794970f09a5a2</miner-address>
+            <miner-address>a0b91f3053ee1b87ac5a7a1d9de0f5a14b71b642ae1d872f70794970f09a5a2</miner-address>
             <cpu-mine-threads>8</cpu-mine-threads>
             <extra-data>AION</extra-data>
     </consensus>
   ```
+  
+- Ensure the stratum API is enabled.
+
+Eg. 
+
+```
+   <apis-enabled>web3,eth,personal,stratum</apis-enabled>
+```
+
 
 - Download the latest prepackaged aion_solo_pool on the ([release](https://github.com/aionnetwork/aion_miner/releases)) page.
 - Place the download into the directory from which you plan to run the pool.
@@ -47,8 +56,7 @@ This is an Aion mining pool designed to be used in conjunction with the Aion min
   ./run_quickstart.sh
   ```
 - Start the Aion kernel in the first terminal window. 
-- The pool is now ready to accept incoming client connections and to distribute work to clients. 
-
+- The pool is now ready to accept incoming client connections and to distribute work to clients. Using default settings the pool will accept client connections on port 3333 and connect to the Aion kernel on port 8545. 
 
 ## Requirements (building from source)
 * **Aion kernel** ([download and install](https://github.com/aionnetwork/aion))
@@ -111,23 +119,10 @@ node test.js
 ```
 - A successful test should output: 
 ```
-Header length: 528
+Header length: 64
 Solution length: 1408
 true
 ```
-
-**Note:**
-
-The test may fail if libsodium was installed during the solo pool setup, to resolve this attempt to reconfigure to dynamic linker using 
-    ```
-    sudo ldconfig -v
-    ```
-    Rebuild the verifier using the command 
-    ```
-    node-gyp rebuild
-    ``` 
-    and then repeating the test.
-
 
 #### 5) Start Redis Server
 
@@ -142,14 +137,14 @@ The test may fail if libsodium was installed during the solo pool setup, to reso
 
 Eg.
 
-```
-<consensus>
-        <mining>false</mining>
-        <miner-address>4cfb91f3053ee1b87ac5a7a1d9de0f5a14b71b642ae1d872f70794970f09a5a2</miner-address>
-        <cpu-mine-threads>8</cpu-mine-threads>
-        <extra-data>AION</extra-data>
-</consensus>
-```
+  ```
+    <consensus>
+            <mining>false</mining>
+            <miner-address>a0b91f3053ee1b87ac5a7a1d9de0f5a14b71b642ae1d872f70794970f09a5a2</miner-address>
+            <cpu-mine-threads>8</cpu-mine-threads>
+            <extra-data>AION</extra-data>
+    </consensus>
+  ```
 
 #### 7) Start the Aion kernel
 
