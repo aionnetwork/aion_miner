@@ -308,13 +308,15 @@ var StratumClient = function(options){
             return;
         }
 
-        if (pendingDifficulty !== null){
-            var result = _this.sendDifficulty(pendingDifficulty);
-            pendingDifficulty = null;
-            if (result) {
-                _this.emit('difficultyChanged', _this.difficulty);
-            }
-        }
+        // Temporarily disable on main while using network difficulty
+
+        // if (pendingDifficulty !== null){
+        //     var result = _this.sendDifficulty(pendingDifficulty);
+        //     pendingDifficulty = null;
+        //     if (result) {
+        //         _this.emit('difficultyChanged', _this.difficulty);
+        //     }
+        // }
         sendJson({
             id    : null,
             method: "mining.notify",
