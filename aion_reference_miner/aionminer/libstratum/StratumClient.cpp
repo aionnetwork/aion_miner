@@ -270,6 +270,15 @@ void StratumClient<Miner, Job, Solution>::processReponse(
 					//workOrder->setTarget(m_nextJobTarget);
 					//workOrder->setTarget(job->serverTarget);
 
+					uint32_t tar[4];
+					uint8_t* hx = (uint8_t*)tar;
+					workOrder -> diffToTarget(tar, m_currentDifficulty);
+					int i;
+					for(i = 0; i < 32; i++){
+						printf("%.2x", hx[i]);
+					}
+					printf("\n");
+
 					if (!(p_current && *workOrder == *p_current)) {
 						//x_current.lock();
 						//if (p_worktimer)
@@ -313,6 +322,15 @@ void StratumClient<Miner, Job, Solution>::processReponse(
 				// TODO: Handle wait time
 				BOOST_LOG_CUSTOM(info) << "Reconnection requested";
 				reconnect();
+			}
+		} else if(method == "mining.set_difficulty") {
+			const Value& valParams = find_value(responseObject, "params");
+			if (valParams.type() == array_type) {
+				const Array& params = valParams.get_array();
+				BOOST_LOG_CUSTOM(
+						info) << "Recv Diff: " << params[0].get_real();
+				m_currentDifficulty = params[0].get_real();
+				std::cout << "Recv Diff: " << params[0].get_real() << std::endl;
 			}
 		}
 		break;

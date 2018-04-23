@@ -74,9 +74,9 @@
                 "3333": {
                     "diff": 10,
                     "varDiff": {
-                        "minDiff": 16,
+                        "minDiff": 0.001,
                         "maxDiff": 512,
-                        "targetTime": 15,
+                        "targetTime": 10,
                         "retargetTime": 90,
                         "variancePercent": 30
                     }

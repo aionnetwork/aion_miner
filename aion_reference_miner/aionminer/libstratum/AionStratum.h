@@ -48,6 +48,7 @@ struct AionJob
     arith_uint256 serverTarget;
     bool clean;
     std::string serverTarget_str;
+    uint32_t *target;
 
     AionJob* clone() const;
     bool equals(const AionJob& a) const { return job == a.job; }
@@ -58,6 +59,10 @@ struct AionJob
 
     void setTarget(std::string target);
 
+    void setTarget();
+
+    void diffToTarget(uint32_t *target, double diff);
+    
     /**
      * Checks whether the given solution satisfies this work order.
      */

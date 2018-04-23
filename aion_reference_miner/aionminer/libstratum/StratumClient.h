@@ -1,11 +1,10 @@
 #pragma once
-// Copyright (c) 2017 Aion Foundation (ross@nuco.io)
+// Copyright (c) 2017 Aion Foundation
 // Copyright (c) 2016 Genoil <jw@meneer.net>
 // Copyright (c) 2016 Jack Grigg <jack@z.cash>
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-//#include "libstratum/ZcashStratum.h"
 #include "libstratum/AionStratum.h"
 
 
@@ -16,6 +15,7 @@
 #include <mutex>
 #include <thread>
 #include <atomic>
+#include <cstdio>
 
 #include "json/json_spirit_value.h"
 
@@ -158,6 +158,8 @@ private:
     boost::asio::deadline_timer * p_worktimer;
 
     string m_nextJobTarget;
+
+    double m_currentDifficulty;
 
 	std::atomic_int m_share_id;
 

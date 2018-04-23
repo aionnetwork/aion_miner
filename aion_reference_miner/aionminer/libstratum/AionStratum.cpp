@@ -444,6 +444,27 @@ void AionJob::setTarget(std::string target) {
 	}
 }
 
+void AionJob::diffToTarget(uint32_t *target, double diff) {
+	
+	uint32_t target2[8];
+	uint64_t m;
+	int k;
+
+	for (k = 6; k > 0 && diff > 1.0; k--)
+		diff /= 4294967296.0;
+	m = (uint64_t)(4294901760.0 / diff);
+	if (m == 0 && k == 6)
+		memset(target2, 0xff, 32);
+	else {
+		memset(target2, 0, 32);
+		target2[k] = (uint32_t)m;
+		target2[k + 1] = (uint32_t)(m >> 32);
+	}
+	
+	for (int i = 0; i < 32; i++)
+		((uint8_t*)target)[31 - i] = ((uint8_t*)target2)[i];
+}
+
 std::string AionJob::getSubmission(const EquihashSolution* solution) {
 	CDataStream ss(SER_NETWORK, PROTOCOL_VERSION);
 	ss << solution->nonce;
