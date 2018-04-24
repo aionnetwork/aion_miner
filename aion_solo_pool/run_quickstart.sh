@@ -7,7 +7,7 @@ function ctrl_c() {
         echo -e "\e[31mShutting down aion_solo__pool"
         tput sgr0
         echo
-        kill -9 `pgrep redis-server`
+#        kill -9 `pgrep redis-server`
 }
 
 export PATH=$PATH:$PWD/node/bin

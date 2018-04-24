@@ -3,9 +3,7 @@
     "testnet": true,
     "coin": "aion.json",
 
-    "__address_aion":    "6a156bA44e87E1d621C266687eA6B63B2283cA5c",
-    "__address_bitcoin": "1AGRxqDa5WjUKBwHB9XYEjmkv1ucoUUy1s",
-    "address": "6a156bA44e87E1d621C266687eA6B63B2283cA5c",
+    "address": "0xa011223344556677889900aabbccddeeff112233445566778899001122334455",
 
     "__rewardRecipients": "total in percentage is the pool fee charged, (rewardRecipients[0] + rewardRecipients[1] + ...)%",
     "rewardRecipients": {

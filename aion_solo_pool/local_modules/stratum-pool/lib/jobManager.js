@@ -250,9 +250,6 @@ var JobManager = module.exports = function JobManager(options){
             return shareError([22, 'duplicate share']);
         }
 
-        var extraNonce1Buffer = new Buffer(extraNonce1, 'hex');
-        var extraNonce2Buffer = new Buffer(extraNonce2, 'hex');
-
         var headerBuffer = job.serializeHeader("root", nTime, nonce); // 528 bytes (doesn't contain soln)
         var headerSolnBuffer = new Buffer.concat([headerBuffer, new Buffer(soln.slice(6), 'hex')]);
         
@@ -262,7 +259,6 @@ var JobManager = module.exports = function JobManager(options){
 
         var blockHashInvalid;
         var blockHash;
-        var blockHex;
 
         var shareDiff = blockTemplate.diff1 / headerBigNum.toNumber() * shareMultiplier;
         var blockDiffAdjusted = job.difficulty * shareMultiplier;
