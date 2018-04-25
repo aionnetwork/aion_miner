@@ -291,11 +291,11 @@ var StratumClient = function(options){
         var target = (zeroPad + adjPow.toString(16)).substr(0,64);
 
 
-        sendJson({
-            id    : null,
-            method: "mining.set_difficulty",
-            params: [target]//[512],
-        });
+        // sendJson({
+        //     id    : null,
+        //     method: "mining.set_difficulty",
+        //     params: [target]//[512],
+        // });
         return true;
     };
 

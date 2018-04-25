@@ -506,11 +506,11 @@ var pool = module.exports = function pool(options, authorizeFn){
                     extraNonce2Size
                 );
 
-                // if (typeof(options.ports[client.socket.localPort]) !== 'undefined' && options.ports[client.socket.localPort].diff) {
-                //     this.sendDifficulty(options.ports[client.socket.localPort].diff);
-                // } else {
-                //     this.sendDifficulty(8);
-                // }
+                if (typeof(options.ports[client.socket.localPort]) !== 'undefined' && options.ports[client.socket.localPort].diff) {
+                    this.sendDifficulty(options.ports[client.socket.localPort].diff);
+                } else {
+                    this.sendDifficulty(8);
+                }
 
                 this.sendMiningJob(_this.jobManager.currentJob.getJobParams());
 
