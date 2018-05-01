@@ -290,12 +290,13 @@ var StratumClient = function(options){
         }
         var target = (zeroPad + adjPow.toString(16)).substr(0,64);
 
+        console.log("Target: 0x" + target.toString('hex'));
 
-        // sendJson({
-        //     id    : null,
-        //     method: "mining.set_difficulty",
-        //     params: [target]//[512],
-        // });
+        sendJson({
+            id    : null,
+            method: "mining.set_difficulty",
+            params: [difficulty]//[512],
+        });
         return true;
     };
 
@@ -308,15 +309,13 @@ var StratumClient = function(options){
             return;
         }
 
-        // Temporarily disable on main while using network difficulty
-
-        // if (pendingDifficulty !== null){
-        //     var result = _this.sendDifficulty(pendingDifficulty);
-        //     pendingDifficulty = null;
-        //     if (result) {
-        //         _this.emit('difficultyChanged', _this.difficulty);
-        //     }
-        // }
+        if (pendingDifficulty !== null){
+            var result = _this.sendDifficulty(pendingDifficulty);
+            pendingDifficulty = null;
+            if (result) {
+                _this.emit('difficultyChanged', _this.difficulty);
+            }
+        }
         sendJson({
             id    : null,
             method: "mining.notify",

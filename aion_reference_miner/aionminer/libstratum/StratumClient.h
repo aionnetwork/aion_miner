@@ -126,6 +126,8 @@ private:
 
     void processReponse(const Object& responseObject);
 
+    void diffToTarget(uint32_t *target, double diff);
+
     cred_t * p_active;
     cred_t m_primary;
     cred_t m_failover;
@@ -157,7 +159,8 @@ private:
 
     boost::asio::deadline_timer * p_worktimer;
 
-    string m_nextJobTarget;
+    // 32 byte target
+    uint32_t m_nextJobTarget[8];
 
     double m_currentDifficulty;
 

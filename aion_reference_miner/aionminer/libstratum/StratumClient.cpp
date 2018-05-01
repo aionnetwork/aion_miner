@@ -52,6 +52,39 @@ StratumClient<Miner, Job, Solution>::StratumClient(
 }
 
 template<typename Miner, typename Job, typename Solution>
+void StratumClient<Miner, Job, Solution>::diffToTarget(uint32_t *target, double diff) {
+	uint32_t target2[8];
+	uint64_t m;
+	int k;
+
+	for (k = 7; k > 0 && diff > 1.0; k--)
+		diff /= 4294967296.0;
+	m = (uint64_t)(4294967296.0 / diff);
+	if (m == 0 && k == 6)
+		memset(target2, 0xff, 32);
+	else {
+		memset(target2, 0, 32);
+
+		target2[k] = (uint32_t)m;
+		target2[k+1] = (uint32_t)(m >> 32);
+	}
+
+	stringstream ss;
+	ss << "Target2: ";
+	ss << hex << setfill('0') << setw(2);
+    uint8_t* test = (uint8_t*)target2;
+	int i;
+	for(i = 0; i < 32; i++){
+	    ss << (int)test[i];
+	}
+
+	std::cout << ss.str() << std::endl;
+
+	for (int i = 0; i < 32; i++)
+		((uint8_t*)target)[31 - i] = ((uint8_t*)target2)[i];
+}
+
+template<typename Miner, typename Job, typename Solution>
 void StratumClient<Miner, Job, Solution>::setFailover(string const & host,
 		string const & port) {
 	setFailover(host, port, p_active->user, p_active->pass);
@@ -267,7 +300,19 @@ void StratumClient<Miner, Job, Solution>::processReponse(
 
 					BOOST_LOG_CUSTOM(
 							info) << CL_CYN "Received new job #" << workOrder->jobId() << CL_N;
-					//workOrder->setTarget(m_nextJobTarget);
+
+					uint8_t* test_target = (uint8_t*)m_nextJobTarget;
+					stringstream ss;
+//					ss << std::hex << std::setfill('0') << std::setw(2);
+					int i;
+					for(i = 0; i < 32; i++){
+						ss << std::setfill('0') << std::setw(2) << std::hex << (int)test_target[i];
+					}
+
+					BOOST_LOG_CUSTOM(
+							info) << "SS: " << ss.str();
+
+					workOrder->setTarget(ss.str());
 					//workOrder->setTarget(job->serverTarget);
 
 					if (!(p_current && *workOrder == *p_current)) {
@@ -288,14 +333,14 @@ void StratumClient<Miner, Job, Solution>::processReponse(
 					}
 				}
 			}
-		} else if (method == "mining.set_target") {
-			const Value& valParams = find_value(responseObject, "params");
-			if (valParams.type() == array_type) {
-				const Array& params = valParams.get_array();
-				m_nextJobTarget = params[0].get_str();
-				BOOST_LOG_CUSTOM(
-						info) << CL_MAG "Target set to " << m_nextJobTarget << CL_N;
-			}
+//		} else if (method == "mining.set_target") {
+//			const Value& valParams = find_value(responseObject, "params");
+//			if (valParams.type() == array_type) {
+//				const Array& params = valParams.get_array();
+//				m_nextJobTarget = params[0].get_str();
+//				BOOST_LOG_CUSTOM(
+//						info) << CL_MAG "Target set to " << m_nextJobTarget << CL_N;
+//			}
 		} else if (method == "mining.set_extranonce") {
 			const Value& valParams = find_value(responseObject, "params");
 			if (valParams.type() == array_type) {
@@ -321,6 +366,22 @@ void StratumClient<Miner, Job, Solution>::processReponse(
 				BOOST_LOG_CUSTOM(
 						info) << "Recv Diff: " << params[0].get_real();
 				m_currentDifficulty = params[0].get_real();
+				diffToTarget(m_nextJobTarget, m_currentDifficulty);
+
+				uint8_t* test = (uint8_t*)m_nextJobTarget;
+				int i;
+
+				arith_uint256 max;
+				max.SetHex("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+
+				BOOST_LOG_CUSTOM(info) << "Max target: " << max.GetHex() << std::endl;
+
+				std::stringstream ss;
+                ss << "VarDiff Target: 0x";
+				for(i = 0; i < 32; i++) {
+                    ss << std::hex << setfill('0') << setw(2) << (int)test[i];
+				}
+                BOOST_LOG_CUSTOM(info) << ss.str() << std::endl;
 			}
 		}
 		break;
@@ -459,6 +520,7 @@ bool StratumClient<Miner, Job, Solution>::submit(const Solution* solution,
 	BOOST_LOG_CUSTOM(trace) << "Write Completed";
 	return true;
 }
+
 
 // create StratumClient class
 template class StratumClient<AionMiner, AionJob, EquihashSolution> ;

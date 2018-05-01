@@ -179,38 +179,9 @@ void static AionMinerThread(AionMiner* miner, int size, int pos,
 				// every iteration need a new timestamp on header.
 				CDataStream ss(SER_NETWORK, PROTOCOL_VERSION);
 				{
-
-					// //  get timestamp in seconds.
-					// uint64_t lets =
-					// 		std::chrono::duration_cast
-					// 				< std::chrono::milliseconds
-					// 				> (std::chrono::system_clock::now().time_since_epoch()).count();
-					// lets /= 1000;
-
-					// // convert to BE
-					// uint64_t bets = __bswap_64(lets);
-
-					// // update the header.
-					// actualHeader.timeStamp = bets;
-
 					// steam out for hash iteration.
 					AEquihashInput I { actualHeader };
 					ss << I;
-
-					// printf("Equihash Input Fields: \n");
-					// BOOST_LOG_CUSTOM(debug, pos) << "Parent Hash:  " << actualHeader.parentHash.ToString();
-					// BOOST_LOG_CUSTOM(debug, pos) << "CoinBase:  " << actualHeader.coinBase.ToString();
-					// BOOST_LOG_CUSTOM(debug, pos) << "State root:  " << actualHeader.stateRoot.ToString();
-					// BOOST_LOG_CUSTOM(debug, pos) << "txTrie:  " << actualHeader.txTrie.ToString();
-					// BOOST_LOG_CUSTOM(debug, pos) << "ReceiptTreeRoot :  " << actualHeader.receiptTreeRoot.ToString();
-					// BOOST_LOG_CUSTOM(debug, pos) << "LogsBloom:  " << actualHeader.logsBloom.ToString();
-					// BOOST_LOG_CUSTOM(debug, pos) << "Difficulty:  " << actualHeader.difficulty.ToString();
-					// BOOST_LOG_CUSTOM(debug, pos) << "Timestamp:  " << actualHeader.timeStamp;
-					// BOOST_LOG_CUSTOM(debug, pos) << "NUmber:  " << actualHeader.number;
-					// BOOST_LOG_CUSTOM(debug, pos) << "extraData:  " << actualHeader.extraData.ToString();
-					// BOOST_LOG_CUSTOM(debug, pos) << "energyConsumed:  " << actualHeader.energyConsumed;
-					// BOOST_LOG_CUSTOM(debug, pos) << "energyLimit:  " << actualHeader.energyLimit;
-
 				}
 
 				char *tequihash_header = (char *) &ss[0];
@@ -249,43 +220,7 @@ void static AionMinerThread(AionMiner* miner, int size, int pos,
 							//Reserve header + nonce + solution size
 							headerBytes.reserve(actualHeader.HEADER_SIZE + 32 + 1408);
 
-							// headerBytes.insert(headerBytes.end(), actualHeader.parentHash.begin(), actualHeader.parentHash.end());
-							// headerBytes.insert(headerBytes.end(), actualHeader.coinBase.begin(), actualHeader.coinBase.end());
-							// headerBytes.insert(headerBytes.end(), actualHeader.stateRoot.begin(), actualHeader.stateRoot.end());
-							// headerBytes.insert(headerBytes.end(), actualHeader.txTrie.begin(), actualHeader.txTrie.end());
-							// headerBytes.insert(headerBytes.end(), actualHeader.receiptTreeRoot.begin(), actualHeader.receiptTreeRoot.end());
-							// headerBytes.insert(headerBytes.end(), actualHeader.logsBloom.begin(), actualHeader.logsBloom.end());
-							// headerBytes.insert(headerBytes.end(), actualHeader.difficulty.begin(), actualHeader.difficulty.end());
-							// uint8_t * timestamp = (uint8_t*)&actualHeader.timeStamp;
-							// for(int i = 0; i < 8; i++) {
-							// 	headerBytes.push_back(*(timestamp+i));
-							// }
-
-							// uint8_t * number = (uint8_t*)&actualHeader.number;
-							// for(int i = 0; i < 8; i++) {
-							// 	headerBytes.push_back(*(number+i));
-							// }
-
-							// headerBytes.insert(headerBytes.end(), actualHeader.extraData.begin(), actualHeader.extraData.end());
-							// headerBytes.insert(headerBytes.end(), actualHeader.nNonce.begin(), actualHeader.nNonce.end());
-							// headerBytes.insert(headerBytes.end(), actualHeader.nSolution.begin(), actualHeader.nSolution.end());
-
-							// uint8_t * energyConsumed = (uint8_t*)&actualHeader.energyConsumed;
-							// for(int i = 0; i < 8; i++) {
-							// 	headerBytes.push_back(*(energyConsumed + i));
-							// }
-
-							// uint8_t * energyLimit = (uint8_t*)&actualHeader.energyLimit;
-							// for(int i = 0; i < 8; i++) {
-							// 	headerBytes.push_back(*(energyLimit+i));
-							// }
-
 							headerBytes.insert(headerBytes.end(), actualHeader.headerHash.begin(), actualHeader.headerHash.end());
-
-							// uint8_t * timestamp = (uint8_t*)&actualHeader.timeStamp;
-							// for(int i = 0; i < 8; i++) {
-							// 	headerBytes.push_back(*(timestamp+i));
-							// }
 							headerBytes.insert(headerBytes.end(), actualHeader.nNonce.begin(), actualHeader.nNonce.end());
 							headerBytes.insert(headerBytes.end(), actualHeader.nSolution.begin(), actualHeader.nSolution.end());
 
@@ -668,7 +603,7 @@ AionJob* AionMiner::parseJob(const Array& params) {
 	ret->nonce2Space = nonce2Space;
 	ret->nonce2Inc = nonce2Inc;
 
-	ret->setTarget(params[2].get_str());
+	//ret->setTarget(params[2].get_str());
 
 	return ret;
 }

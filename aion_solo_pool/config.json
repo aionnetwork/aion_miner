@@ -72,12 +72,12 @@
             "algorithm": "equihash",
             "ports": {
                 "3333": {
-                    "diff": 10,
+                    "diff": 2,
                     "varDiff": {
-                        "minDiff": 0.001,
+                        "minDiff": 1,
                         "maxDiff": 512,
                         "targetTime": 10,
-                        "retargetTime": 90,
+                        "retargetTime": 30,
                         "variancePercent": 30
                     }
                 }

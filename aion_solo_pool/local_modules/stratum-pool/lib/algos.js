@@ -15,7 +15,7 @@ var algos = module.exports = global.algos = {
     },
     'equihash': {
         multiplier: 1,
-        diff: parseInt('0x0007ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'),
+        diff: parseInt('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'),
         hash: function(){
             return function(){
                 return ev.verify.apply(this, arguments);
