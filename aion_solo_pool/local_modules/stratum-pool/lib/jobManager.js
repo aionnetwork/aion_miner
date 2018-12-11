@@ -311,7 +311,7 @@ var JobManager = module.exports = function JobManager(options){
             worker: workerName,
             height: job.rpcData.height,
             blockReward: job.rpcData.reward,
-            difficulty: difficulty,
+            difficulty: job.difficulty,
             shareDiff: shareDiff.toFixed(8),
             blockDiff: blockDiffAdjusted,
             blockDiffActual: job.difficulty,
