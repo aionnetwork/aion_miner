@@ -413,7 +413,7 @@ var pool = module.exports = function pool(options, authorizeFn){
                     return;
                 }
             }
-
+            
             if (!rpcResults.validateaddress.isvalid){
                 emitErrorLog('Daemon reports address is not valid');
                 return;

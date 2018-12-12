@@ -121,18 +121,22 @@ function DaemonInterface(daemons, logger){
     function batchCmd(cmdArray, callback){
 
         var requestJson = [];
+        var baseId = Date.now() + + Math.floor(Math.random() * 10);
 
         for (var i = 0; i < cmdArray.length; i++){
             requestJson.push({
                 method: cmdArray[i][0],
                 params: cmdArray[i][1],
-                id: Date.now() + Math.floor(Math.random() * 10) + i
+                id: baseId + i
             });
         }
 
         var serializedRequest = JSON.stringify(requestJson);
 
         performHttpRequest(instances[0], serializedRequest, function(error, result){
+            result.sort(function(a, b){
+                return a.id - b.id;
+            });
             callback(error, result);
         });
 
