@@ -55,7 +55,8 @@ function DaemonInterface(daemons, logger){
             method  : 'POST',
             auth    : instance.user + ':' + instance.password,
             headers : {
-                'Content-Length': jsonData.length
+                'Content-Length': jsonData.length,
+                'Content-Type': 'application/json'
             }
         };
 
@@ -127,7 +128,8 @@ function DaemonInterface(daemons, logger){
             requestJson.push({
                 method: cmdArray[i][0],
                 params: cmdArray[i][1],
-                id: baseId + i
+                id: baseId + i,
+                jsonrpc: '2.0'
             });
         }
 
@@ -168,6 +170,7 @@ function DaemonInterface(daemons, logger){
             var requestJson = JSON.stringify({
                 method: method,
                 params: params,
+                jsonrpc: '2.0',
                 id: Date.now() + Math.floor(Math.random() * 10)
             });
 
