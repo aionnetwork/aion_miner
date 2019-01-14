@@ -243,7 +243,7 @@ var pool = module.exports = function pool(options, authorizeFn){
 
         var rpcCommand, rpcArgs;
         rpcCommand = 'submitblock';
-        rpcArgs =[nonce, solution, headerHash, nTime];
+        rpcArgs =[nonce, solution, headerHash];
         
         _this.daemon.cmd(rpcCommand,
             rpcArgs,
@@ -268,7 +268,6 @@ var pool = module.exports = function pool(options, authorizeFn){
         );
 
     }
-
 
     function SetupRecipients(){
         var recipients = [];
@@ -456,7 +455,7 @@ var pool = module.exports = function pool(options, authorizeFn){
             if (rpcResults.submitblock.message === 'Method not found'){
                 options.hasSubmitMethod = false;
             }
-            else if (rpcResults.submitblock.code === -1){
+            else if (rpcResults.submitblock.code === -32602 || rpcResults.submitblock.code === -1){
                 options.hasSubmitMethod = true;
             }
             else {
