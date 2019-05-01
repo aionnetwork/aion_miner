@@ -26,7 +26,7 @@ make -C ./redis
 # Build NPM 
 echo -e "\e[32mInstalling NPM modules."
 tput sgr0
-export PATH=$PATH:$PWD/node/bin
+export PATH=$PWD/node/bin:$PATH
 npm install
 
 # Clean
